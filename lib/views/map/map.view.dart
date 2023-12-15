@@ -48,6 +48,19 @@ class _MapPageState extends State<MapPage> {
         return;
       }
     }
+
+    location.onLocationChanged.listen((currentLocation) {
+      if (mounted) {
+        // Check if the widget is still mounted
+        setState(() {
+          if (currentLocation.latitude != null &&
+              currentLocation.longitude != null) {
+            _currentPosition =
+                LatLng(currentLocation.latitude!, currentLocation.longitude!);
+          }
+        });
+      }
+    });
   }
 
   @override
