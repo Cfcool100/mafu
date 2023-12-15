@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:mafuriko/utils/pop_up.dart';
+import 'package:mafuriko/controllers/auth.controller.dart';
 import 'package:mafuriko/utils/themes.dart';
 import 'package:mafuriko/views/authentication/login.dart';
-import 'package:mafuriko/views/home/home.view.dart';
 import 'package:mafuriko/widgets/button.dart';
 import 'package:mafuriko/widgets/form.dart';
 import 'package:mafuriko/widgets/linkText.dart';
 import 'package:mafuriko/widgets/section_title.dart';
+import 'package:provider/provider.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
+
   static String id = '/register';
 
   @override
@@ -24,6 +25,7 @@ class _RegisterPageState extends State<RegisterPage> {
   String _firstname = '';
   String _password = '';
   String _confirmPassword = '';
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -122,20 +124,31 @@ class _RegisterPageState extends State<RegisterPage> {
                         },
                       ),
                       const Gap(50),
-                      PrimaryButton(
-                        onPressed: _email.isEmpty ||
-                                _confirmPassword.isEmpty ||
-                                _lastname.isEmpty ||
-                                _firstname.isEmpty
-                            ? null
-                            : () {
-//                                 PopUp(message: '''  Inscription réussie.
-// Allez à la page daccueil''').successAuth(context);
-                                Navigator.pushNamed(context, HomePage.id);
-                              },
-                        title: 'Créer un compte',
-                        color: AppTheme.primaryColor,
-                        textColor: Colors.white,
+                      Consumer<Authentication>(
+                        builder: (context, auth, child) {
+                          return PrimaryButton(
+                            onPressed: _email.isEmpty ||
+                                    _confirmPassword.isEmpty ||
+                                    _lastname.isEmpty ||
+                                    _firstname.isEmpty
+                                ? null
+                                : () {
+//
+                                    auth.userRegister(
+                                      email: _email,
+                                      firstname: _firstname,
+                                      lastname: _lastname,
+                                      number: _number,
+                                      password: _password,
+                                      confirmPassword: _confirmPassword,
+                                      context: context,
+                                    );
+                                  },
+                            title: 'Créer un compte',
+                            color: AppTheme.primaryColor,
+                            textColor: Colors.white,
+                          );
+                        },
                       ),
                       const Gap(20),
                       LinkText(

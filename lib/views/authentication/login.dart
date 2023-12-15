@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:mafuriko/controllers/auth.controllers.dart';
+import 'package:mafuriko/controllers/auth.controller.dart';
 import 'package:mafuriko/views/authentication/register.dart';
 import 'package:mafuriko/widgets/button.dart';
 import 'package:mafuriko/widgets/form.dart';
 import 'package:mafuriko/widgets/linkText.dart';
 import 'package:mafuriko/widgets/section_title.dart';
 import 'package:provider/provider.dart';
-
-import '../home/home.view.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

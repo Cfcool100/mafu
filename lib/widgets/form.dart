@@ -8,9 +8,10 @@ class InputForm extends StatelessWidget {
     super.key,
     required this.title,
     required this.hint,
-    required this.onChanged,
     required this.type,
+    this.onChanged,
     this.obscure,
+    this.enable,
     this.width,
     this.height,
     this.maxLine,
@@ -20,10 +21,11 @@ class InputForm extends StatelessWidget {
   final String hint;
   final TextInputType type;
   final bool? obscure;
+  final bool? enable;
   final double? width;
   final double? height;
   final int? maxLine;
-  final Function(String value) onChanged;
+  final Function(String value)? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +58,7 @@ class InputForm extends StatelessWidget {
               obscureText: obscure ?? false,
               maxLines: maxLine ?? 1,
               decoration: InputDecoration(
+                enabled: enable ?? true,
                 hintText: hint,
                 hintStyle: GoogleFonts.montserrat(
                   fontSize: 12.0,

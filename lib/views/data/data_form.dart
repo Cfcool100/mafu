@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -9,9 +8,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
+import 'package:mafuriko/controllers/alert.controller.dart';
 import 'package:mafuriko/utils/themes.dart';
 import 'package:mafuriko/widgets/button.dart';
 import 'package:mafuriko/widgets/form.dart';
+import 'package:provider/provider.dart';
 
 class DataForm extends StatefulWidget {
   const DataForm({super.key});
@@ -22,19 +23,25 @@ class DataForm extends StatefulWidget {
 }
 
 class _DataFormState extends State<DataForm> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getLocate();
+  }
+
   List<String> list = <String>['Elevé', 'Moyen', 'Faible'];
-  String? dropdownValue;
 
   XFile? _pickedFile;
   final ImagePicker _picker = ImagePicker();
   String? base64String;
 
   Future<void> imageToBase64() async {
-    final _pickedImage = await _picker.pickImage(source: ImageSource.camera);
+    final pickedImage = await _picker.pickImage(source: ImageSource.camera);
 
-    if (_pickedImage != null) {
+    if (pickedImage != null) {
       setState(() {
-        _pickedFile = _pickedImage;
+        _pickedFile = pickedImage;
       });
 
       List<int> imageBytes = File(_pickedFile!.path).readAsBytesSync();
@@ -50,15 +57,12 @@ class _DataFormState extends State<DataForm> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
-  static const LatLng _kGooglePlex = LatLng(5.363037, -4.027152);
+  static LatLng _current = const LatLng(5.363037, -4.027152);
   static const LatLng _kApplePark = LatLng(5.372475, -4.020844);
-
-  late LatLng _currentPosition;
 
   Future<void> getLocate() async {
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
-    // LocationData _locationData;
 
     _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled) {
@@ -77,6 +81,20 @@ class _DataFormState extends State<DataForm> {
     }
   }
 
+  final position = {
+    'lat': '${_current.latitude}',
+    'lon': '${_current.longitude}',
+  };
+  final date =
+      '${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}';
+  final hour =
+      '${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, "0")}';
+  final String description = '';
+  String? dropdownValue;
+  List<String> images = [
+    'base64String',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -85,29 +103,28 @@ class _DataFormState extends State<DataForm> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              Container(
+              SizedBox(
                 width: double.infinity,
                 height: 316,
-                // color: AppTheme.tertiaryColor,
                 child: GoogleMap(
                   mapType: MapType.normal,
-                  initialCameraPosition: const CameraPosition(
-                    target: _kGooglePlex,
+                  initialCameraPosition: CameraPosition(
+                    target: _current,
                     zoom: 15,
                   ),
                   onMapCreated: (GoogleMapController controller) {
                     _controller.complete(controller);
                   },
-                  markers: {
-                    const Marker(
-                      markerId: MarkerId('_currentPosition'),
-                      position: _kGooglePlex,
-                      icon: BitmapDescriptor.defaultMarker,
-                    ),
-                  },
-                  scrollGesturesEnabled: true,
-                  myLocationButtonEnabled: true,
-                  myLocationEnabled: true,
+                  // markers: {
+                  //   Marker(
+                  //     markerId: MarkerId('_currentPosition'),
+                  //     position: _current,
+                  //     icon: BitmapDescriptor.defaultMarker,
+                  //   ),
+                  // },
+                  // scrollGesturesEnabled: true,
+                  // myLocationButtonEnabled: true,
+                  // myLocationEnabled: true,
                 ),
               ),
               const Gap(20.0),
@@ -116,22 +133,20 @@ class _DataFormState extends State<DataForm> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    InputForm(
+                    const InputForm(
                       title: 'Localisation',
-                      hint: 'Activer la position actuelle',
-                      onChanged: (value) {
-                        //
-                      },
+                      hint: 'Position actuelle',
+                      enable: false,
                       obscure: true,
                       type: TextInputType.text,
                     ),
-                    Gap(20),
+                    const Gap(20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         InputForm(
                           title: 'Date',
-                          hint: 'Entrer la date',
+                          hint: date,
                           onChanged: (value) {
                             //
                           },
@@ -140,7 +155,7 @@ class _DataFormState extends State<DataForm> {
                         ),
                         InputForm(
                           title: 'Heure',
-                          hint: 'Choisir l’heure',
+                          hint: '$hour',
                           onChanged: (value) {
                             //
                           },
@@ -149,7 +164,7 @@ class _DataFormState extends State<DataForm> {
                         ),
                       ],
                     ),
-                    Gap(20),
+                    const Gap(20),
                     InputForm(
                       title: 'Description',
                       hint: 'Décrire l’inondation et le contexte approprié',
@@ -160,12 +175,12 @@ class _DataFormState extends State<DataForm> {
                       height: 110,
                       maxLine: 5,
                     ),
-                    Gap(20),
+                    const Gap(20),
                     Text(
                       'Intensité de l’inondation',
                       style: AppTheme.textSemiBoldH5,
                     ),
-                    Gap(10),
+                    const Gap(10),
                     Container(
                       height: 40,
                       width: double.infinity,
@@ -175,7 +190,7 @@ class _DataFormState extends State<DataForm> {
                       ),
                       child: DropdownButton(
                         hint: const Text('Evaluer l’intensité de l’inondation'),
-                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         value: dropdownValue,
                         onChanged: (newValue) {
                           setState(() {
@@ -183,14 +198,14 @@ class _DataFormState extends State<DataForm> {
                           });
                         },
                         isExpanded: true,
-                        underline: SizedBox(),
+                        underline: const SizedBox(),
                         style: GoogleFonts.montserrat(
                           fontSize: 12.0,
                           fontWeight: FontWeight.w400,
                           color: Colors.black87,
                         ),
                         borderRadius: BorderRadius.circular(10),
-                        icon: Icon(
+                        icon: const Icon(
                           CupertinoIcons.chevron_down,
                           color: Colors.grey,
                         ),
@@ -203,12 +218,12 @@ class _DataFormState extends State<DataForm> {
                         }).toList(),
                       ),
                     ),
-                    Gap(20),
+                    const Gap(20),
                     Text(
                       'Image',
                       style: AppTheme.textSemiBoldH5,
                     ),
-                    Gap(10),
+                    const Gap(10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -220,11 +235,11 @@ class _DataFormState extends State<DataForm> {
                             width: 114,
                             height: 115,
                             decoration: ShapeDecoration(
-                              color: Color(0xFF111D4A),
+                              color: const Color(0xFF111D4A),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8)),
                             ),
-                            child: Icon(
+                            child: const Icon(
                               CupertinoIcons.camera,
                               color: CupertinoColors.white,
                               size: 50.0,
@@ -239,7 +254,7 @@ class _DataFormState extends State<DataForm> {
                               image: _pickedFile != null
                                   ? FileImage(File(_pickedFile!.path))
                                       as ImageProvider<Object>
-                                  : NetworkImage(
+                                  : const NetworkImage(
                                       "https://s3-alpha-sig.figma.com/img/77c2/17ff/a13bdf834705c44aa9d1b227365086f4?Expires=1703462400&Signature=ilkN~4vfHguKnwyl15EQANw24kyr8g88cxaNNm9ZsweVttSSQist8bT66QyglZXplqyI-sdOGFzakYD2juM6gkfPhtZ5W5oaNDi9dIiyhLUg6TsmkULFSuJCQ~GzU2IUUwcb2J8JM4s9MXh7O5Kd5~8WeXBai19JVe~Nq3RYYZz7g8h0odUCbB0B~AJcSYXUJj3TIp5dmmzLr~DXMhaRRl7tiUdH5oydlgLb5TgmQakNM~LjNhwHWXM40HbcSYSLTOV8aaw4E5cMY93NTNusWoe2D0ySfaz72m~-rD7gXUphbCz6wGBMoo1FqSqpyCM6Z2W16mXA8XmbrMrMLqpyVQ__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4"),
                               fit: BoxFit.fill,
                             ),
@@ -249,16 +264,25 @@ class _DataFormState extends State<DataForm> {
                         ),
                       ],
                     ),
-                    Gap(50),
-                    PrimaryButton(
-                      color: AppTheme.primaryColor,
-                      textColor: CupertinoColors.white,
-                      onPressed: () {
-                        //
+                    const Gap(50),
+                    Consumer<Alert>(
+                      builder: (context, alert, child) {
+                        return PrimaryButton(
+                          color: AppTheme.primaryColor,
+                          textColor: CupertinoColors.white,
+                          onPressed: () {
+                            Alert().sendAlert(
+                                position: position,
+                                date: '${date}T$hour',
+                                description: description,
+                                intensity: dropdownValue!,
+                                image: base64String!);
+                          },
+                          title: 'Envoyer l’alerte',
+                        );
                       },
-                      title: 'Envoyer l’alerte',
                     ),
-                    Gap(30),
+                    const Gap(30),
                   ],
                 ),
               ),
@@ -269,5 +293,3 @@ class _DataFormState extends State<DataForm> {
     );
   }
 }
-
-// api_key: AIzaSyAxtdCodXhHS0rd8MbX61O28jKuDlLRFUY
