@@ -1,17 +1,25 @@
-class Alert {
-  final String location;
-  final String description;
-  final DateTime hours;
-  final DateTime date;
-  final String intensity;
-  final String? image;
+class FloodAlert {
+  Map<String, String> floodLocation;
+  DateTime floodDate;
+  String floodDescription;
+  String floodIntensity;
+  List<String> floodImages;
 
-  Alert({
-    required this.location,
-    required this.date,
-    required this.hours,
-    required this.description,
-    required this.intensity,
-    this.image,
+  FloodAlert({
+    required this.floodLocation,
+    required this.floodDate,
+    required this.floodDescription,
+    required this.floodIntensity,
+    required this.floodImages,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'floodLocation': floodLocation,
+      'floodDate': floodDate.toUtc().toIso8601String(),
+      'floodDescription': floodDescription,
+      'floodIntensity': floodIntensity,
+      'floodImages': floodImages,
+    };
+  }
 }

@@ -25,7 +25,6 @@ class DataForm extends StatefulWidget {
 class _DataFormState extends State<DataForm> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getLocate();
   }
@@ -58,7 +57,7 @@ class _DataFormState extends State<DataForm> {
       Completer<GoogleMapController>();
 
   static LatLng _current = const LatLng(5.363037, -4.027152);
-  static const LatLng _kApplePark = LatLng(5.372475, -4.020844);
+  // static const LatLng _kApplePark = LatLng(5.372475, -4.020844);
 
   Future<void> getLocate() async {
     bool _serviceEnabled;
@@ -272,11 +271,12 @@ class _DataFormState extends State<DataForm> {
                           textColor: CupertinoColors.white,
                           onPressed: () {
                             Alert().sendAlert(
-                                position: position,
-                                date: '${date}T$hour',
-                                description: description,
-                                intensity: dropdownValue!,
-                                image: base64String!);
+                              position: position,
+                              // date: DateTime.now(),
+                              description: description,
+                              intensity: dropdownValue!,
+                              image: base64String!,
+                            );
                           },
                           title: 'Envoyer l’alerte',
                         );

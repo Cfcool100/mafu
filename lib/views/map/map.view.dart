@@ -24,7 +24,7 @@ class _MapPageState extends State<MapPage> {
       Completer<GoogleMapController>();
 
   static const LatLng _kGooglePlex = LatLng(5.363037, -4.027152);
-  static const LatLng _kApplePark = LatLng(5.372475, -4.020844);
+  // static const LatLng _kApplePark = LatLng(5.372475, -4.020844);
 
   late LatLng _currentPosition;
 
