@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:mafuriko/providers/user.providers.dart';
 import 'package:mafuriko/utils/themes.dart';
 import 'package:mafuriko/widgets/button.dart';
 import 'package:mafuriko/widgets/form.dart';
@@ -27,110 +30,98 @@ class _EditProfilePageState extends State<EditProfilePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Flexible(
-                  child: ListView(
-                    children: [
-                      // const SizedBox(width: double.infinity, height: 25.0),
-                      const Gap(30),
-                      const SectionTitle(title: 'Modifier profil'),
-                      const Gap(100),
-                      Stack(
-                        alignment: Alignment.topCenter,
-                        clipBehavior: Clip.none,
+                  child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                    builder: (context, state) {
+                      return ListView(
                         children: [
-                          Container(
-                            // height: MediaQuery.sizeOf(context).height * .12,
-                            // // color: AppTheme.primaryColor,
-                            margin: EdgeInsets.only(
-                              top: MediaQuery.of(context).size.height * .02,
-                              bottom: MediaQuery.of(context).size.height * .01,
-                            ),
-                            child: null,
-                          ),
-                          Positioned(
-                            bottom: 10,
-                            child: CircleAvatar(
-                              radius: 35,
-                              backgroundColor: AppTheme.tertiaryColor,
-                              child: Container(
-                                decoration: const ShapeDecoration(
-                                  image: DecorationImage(
-                                    image: AssetImage('images/profile.png'),
-                                    fit: BoxFit.contain,
-                                  ),
-                                  shape: CircleBorder(),
+                          Gap(30.h),
+                          const SectionTitle(title: 'Modifier profil'),
+                          Gap(100.h),
+                          Stack(
+                            alignment: Alignment.topCenter,
+                            clipBehavior: Clip.none,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(
+                                  top: .02.sh,
+                                  bottom: .01.sh,
                                 ),
                               ),
-                            ),
-                          ),
-                          Positioned(
-                            right: MediaQuery.sizeOf(context).width * .38,
-                            bottom: 2,
-                            child: CircleAvatar(
-                              backgroundColor: AppTheme.primaryColor,
-                              radius: 12,
-                              child: const Icon(
-                                Icons.camera_alt_outlined,
-                                color: Colors.white,
-                                size: 15,
+                              Positioned(
+                                bottom: 10.h,
+                                child: CircleAvatar(
+                                  radius: 35.r,
+                                  backgroundColor: AppTheme.tertiaryColor,
+                                  child: Container(
+                                    decoration: const ShapeDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage('images/profile.png'),
+                                        fit: BoxFit.contain,
+                                      ),
+                                      shape: CircleBorder(),
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
+                              Positioned(
+                                right: .38.sw,
+                                bottom: 3.h,
+                                child: CircleAvatar(
+                                  backgroundColor: AppTheme.primaryColor,
+                                  radius: 10.r,
+                                  child: Icon(
+                                    Icons.camera_alt_outlined,
+                                    color: Colors.white,
+                                    size: 12.w,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          InputForm(
+                            title: 'Nom ',
+                            hint: 'Entrer votre nom ',
+                            type: TextInputType.text,
+                            controller: TextEditingController(text: '${state.user?.lastName}'),
+                          ),
+                          const Gap(17),
+                          InputForm(
+                            title: 'Prénoms ',
+                            hint: 'Entrer vos Prénoms ',
+                            type: TextInputType.text,
+                            controller:
+                                TextEditingController(text: '${state.user?.firstName}'),
+                          ),
+                          const Gap(17),
+                          InputForm(
+                            title: 'Numéro de téléphone ',
+                            hint: 'Entrer votre numéro de téléphone ',
+                            type: TextInputType.phone,
+                            controller:
+                                TextEditingController(text: '${state.user?.userNumber.contains('+225') == true? '' : '+225'} ${state.user?.userNumber}'),
+                          ),
+                          const Gap(17),
+                          
+                          InputForm(
+                            title: 'Localisation',
+                            hint: 'Entrer votre mot de passe',
+                            controller: TextEditingController(
+                                text: 'Bonoumin, Cocody, Abidjan'),
+                            type: TextInputType.text,
+                          ),
+                          const Gap(50),
+                          PrimaryButton(
+                            onPressed: () {
+                              // PopUp.successAuth(context);
+                              Navigator.pushNamed(context, 'HomePage.id');
+                            },
+                            title: 'Créer un compte',
+                            color: AppTheme.primaryColor,
+                            textColor: Colors.white,
                           ),
                         ],
-                      ),
-                      InputForm(
-                        title: 'Nom ',
-                        hint: 'Entrer votre npm ',
-                        type: TextInputType.text,
-                        onChanged: (value) {
-                          setState(() {
-                            // _lastname = value;
-                          });
-                        },
-                      ),
-                      const Gap(17),
-                      InputForm(
-                        title: 'Prénoms ',
-                        hint: 'Entrer vos Prénoms ',
-                        type: TextInputType.text,
-                        onChanged: (value) {
-                          setState(() {
-                            // _firstname = value;
-                          });
-                        },
-                      ),
-                      const Gap(17),
-                      InputForm(
-                        title: 'Numéro de téléphone ',
-                        hint: 'Entrer votre numéro de téléphone ',
-                        type: TextInputType.phone,
-                        onChanged: (value) {
-                          setState(() {
-                            // _number = value;
-                          });
-                        },
-                      ),
-                      const Gap(17),
-                      InputForm(
-                        title: 'Localisation',
-                        hint: 'Entrer votre mot de passe',
-                        type: TextInputType.text,
-                        onChanged: (value) {
-                          setState(() {
-                            // _password = value;
-                          });
-                        },
-                      ),
-                      const Gap(50),
-                      PrimaryButton(
-                        onPressed: () {
-                          // PopUp.successAuth(context);
-                          Navigator.pushNamed(context, 'HomePage.id');
-                        },
-                        title: 'Créer un compte',
-                        color: AppTheme.primaryColor,
-                        textColor: Colors.white,
-                      ),
-                    ],
+                      );
+                    },
                   ),
                 ),
               ],

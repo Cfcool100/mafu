@@ -40,12 +40,12 @@ class _PreferenceState extends State<Preference> with RestorationMixin {
       appBar: AppBar(),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             children: [
-              Gap(30),
-              SectionTitle(title: 'Préférences'),
-              Gap(50),
+              const Gap(30),
+              const SectionTitle(title: 'Préférences'),
+              const Gap(50),
               Container(
                 color: Colors.white,
                 child: Column(

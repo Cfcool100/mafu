@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mafuriko/utils/themes.dart';
 
 class SectionTitle extends StatelessWidget {
@@ -19,11 +19,11 @@ class SectionTitle extends StatelessWidget {
       children: [
         Text(
           title,
-          style: AppTheme.textH1.copyWith(fontSize: width ?? 22),
+          style: AppTheme.textH1.copyWith(fontSize: width == null? 22.sp : 14.sp),
         ),
         Divider(
           thickness: 1,
-          endIndent: MediaQuery.sizeOf(context).width * .72,
+          endIndent: width == null? .72.sw : .80.sw,
           color: AppTheme.secondaryColor,
         ),
       ],

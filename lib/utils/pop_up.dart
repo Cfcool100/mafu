@@ -34,7 +34,7 @@ class PopUp {
                   height: 24,
                 ),
                 Text(
-                  this.message,
+                  message,
                   textAlign: TextAlign.center,
                   style: Theme.of(context)
                       .textTheme

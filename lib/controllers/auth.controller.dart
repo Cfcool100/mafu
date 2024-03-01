@@ -1,12 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:mafuriko/providers/user.providers.dart';
-import 'package:mafuriko/utils/pop_up.dart';
-import 'package:mafuriko/views/home/home.view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Authentication extends ChangeNotifier {
-  void userRegister({
+  static Future<bool> userRegister({
     required String email,
     required String lastname,
     required String firstname,
@@ -15,8 +15,6 @@ class Authentication extends ChangeNotifier {
     required String confirmPassword,
     BuildContext? context,
   }) async {
-    notifyListeners();
-
     final body = {
       "userEmail": email.trim(),
       "userFirstName": firstname.trim(),
@@ -26,99 +24,81 @@ class Authentication extends ChangeNotifier {
       "userPasswordC": confirmPassword.trim(),
     };
 
+    final headers = <String, String>{
+      'Content-Type': 'application/json',
+    };
     try {
       final response = await http.post(
         Uri.parse('https://mafu-back.vercel.app/users/signup'),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-        },
+        headers: headers,
         body: json.encode(body),
       );
 
       debugPrint('Response body: ${response.body}');
 
-      final resDec = json.decode(response.body);
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final id = resDec['data']['_id'];
-        final email = resDec['data']['userEmail'];
-        final firstname = resDec['data']['userFirstName'];
-        final lastname = resDec['data']['userLastName'];
-        final number = resDec['data']['userNumber'];
-        final password = resDec['data']['userPassword'];
+      final data = json.decode(response.body);
+      if (response.statusCode == 201 &&
+          data['message'] == "User enregistré !") {
+        final SharedPreferences pref = await SharedPreferences.getInstance();
 
-        DatabaseProvider().saveId(id);
-        DatabaseProvider().saveEmail(email);
-        DatabaseProvider().saveNumber(number);
-        DatabaseProvider().saveFirstName(firstname);
-        DatabaseProvider().saveLastName(lastname);
-        DatabaseProvider().savePassword(password);
+        final userData = data['data'];
 
-        if (context != null && resDec['message'] == 'User enregistré !') {
-          // Add null check for context
+        pref.setString('userData', jsonEncode(userData));
 
-          // ignore: use_build_context_synchronously
-          PopUp(message: '''  Inscription réussie.
-// Allez à la page daccueil''').successAuth(context);
+        debugPrint(pref.getString('userData'));
 
-          // ignore: use_build_context_synchronously
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => const HomePage(),
-          ));
-        }
+        return true;
+        // PopUp(
+        //   message: 'Inscription réussie. \nAllez à la page daccueil',
+        // ).successAuth(context);
+      } else {
+        return false;
       }
     } catch (e) {
-      print('::::$e');
+      debugPrint('::::$e');
+      return false;
     }
   }
 
-  void userLogin({
-    required String email,
-    required String password,
-    BuildContext? context,
-  }) async {
-    notifyListeners();
-
+  static Future<bool> userLogin(
+      {required String email,
+      required String password,
+      BuildContext? context}) async {
     final body = {
       "userEmail": email.trim(),
       "userPassword": password.trim(),
     };
+    final headers = <String, String>{
+      'Content-Type': 'application/json',
+    };
 
     try {
+      var url = Uri.parse('https://mafu-back.vercel.app/users/signin');
       final response = await http.post(
-        Uri.parse('https://mafu-back.vercel.app/users/signin'),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-        },
+        url,
+        headers: headers,
         body: json.encode(body),
       );
 
       debugPrint('Response body: ${response.body}');
 
-      final resDec = json.decode(response.body);
-      if (response.statusCode == 201) {
-        final id = resDec['data']['_id'];
-        final email = resDec['data']['userEmail'];
-        final firstname = resDec['data']['userFirstName'];
-        final lastname = resDec['data']['userLastName'];
-        final number = resDec['data']['userNumber'];
-        final password = resDec['data']['userPassword'];
+      final data = json.decode(response.body);
+      if (response.statusCode == 201 && data['message'] == "connected") {
+        final SharedPreferences pref = await SharedPreferences.getInstance();
 
-        DatabaseProvider().saveId(id);
-        DatabaseProvider().saveEmail(email);
-        DatabaseProvider().saveNumber(number);
-        DatabaseProvider().saveFirstName(firstname);
-        DatabaseProvider().saveLastName(lastname);
-        DatabaseProvider().savePassword(password);
+        final userData = data['data'];
 
-        if (context != null && resDec['message'] == 'connected') {
-          // ignore: use_build_context_synchronously
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => const HomePage(),
-          ));
-        }
+        pref.setString('userData', jsonEncode(userData));
+
+        debugPrint( 'data cached : \n${pref.getString('userData')}');
+
+        return true;
+      } else {
+        return false;
       }
     } catch (e) {
-      print('::::$e');
+      debugPrint('::::$e');
+      return false;
     }
   }
 }

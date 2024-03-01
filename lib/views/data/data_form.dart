@@ -1,18 +1,20 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:image/image.dart' as img;
+import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:location/location.dart';
 import 'package:mafuriko/controllers/alert.controller.dart';
 import 'package:mafuriko/utils/themes.dart';
 import 'package:mafuriko/widgets/button.dart';
 import 'package:mafuriko/widgets/form.dart';
-import 'package:provider/provider.dart';
 
 class DataForm extends StatefulWidget {
   const DataForm({super.key});
@@ -26,7 +28,7 @@ class _DataFormState extends State<DataForm> {
   @override
   void initState() {
     super.initState();
-    getLocate();
+    _getLocate();
   }
 
   List<String> list = <String>['Elevé', 'Moyen', 'Faible'];
@@ -44,51 +46,72 @@ class _DataFormState extends State<DataForm> {
       });
 
       List<int> imageBytes = File(_pickedFile!.path).readAsBytesSync();
-      base64String = base64Encode(imageBytes);
-      print(base64String);
+
+      img.Image image = img.decodeImage(Uint8List.fromList(imageBytes))!;
+
+      int quality = 80;
+
+      // Encodez l'image compressée en JPEG
+      List<int> compressedBytes = img.encodeJpg(image, quality: quality);
+
+      base64String = base64Encode(compressedBytes);
+
+      // Afficher la taille originale et la taille compressée
+      debugPrint('Taille originale: ${imageBytes.length} bytes');
+      debugPrint('Taille compressée: ${compressedBytes.length} bytes');
+      debugPrint(base64String);
     } else {
-      print('did not select an image');
+      debugPrint('did not select an image');
     }
   }
-
-  Location location = Location();
 
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
-  static LatLng _current = const LatLng(5.363037, -4.027152);
-  // static const LatLng _kApplePark = LatLng(5.372475, -4.020844);
+  LatLng _current = const LatLng(9.103, 5.51);
 
-  Future<void> getLocate() async {
-    bool _serviceEnabled;
-    PermissionStatus _permissionGranted;
+  Future<Position> _getLocate() async {
+    bool serviceEnabled;
+    LocationPermission permission;
 
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        return;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled');
+    }
+
+    permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+
+      if (permission == LocationPermission.denied) {
+        return Future.error("Location permission denied");
       }
     }
 
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return;
-      }
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('Location permissions are permanently denied');
     }
+
+    Position position = await Geolocator.getCurrentPosition();
+
+    setState(() {
+      _current = const LatLng(-3.921089, 5.318270);
+    });
+
+    return position;
   }
 
-  final position = {
-    'lat': '${_current.latitude}',
-    'lon': '${_current.longitude}',
-  };
+  // final position = {
+  //   'lat': '${_current.latitude}',
+  //   'lon': '${_current.longitude}',
+  // };
   final date =
       '${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}';
   final hour =
       '${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, "0")}';
-  final String description = '';
+  String description = '';
   String? dropdownValue;
   List<String> images = [
     'base64String',
@@ -96,39 +119,35 @@ class _DataFormState extends State<DataForm> {
 
   @override
   Widget build(BuildContext context) {
+    // debugPrint('$position');
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: SingleChildScrollView(
           child: Column(
             children: [
               SizedBox(
                 width: double.infinity,
-                height: 316,
+                height: 316.w,
                 child: GoogleMap(
                   mapType: MapType.normal,
                   initialCameraPosition: CameraPosition(
                     target: _current,
                     zoom: 15,
                   ),
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: false,
                   onMapCreated: (GoogleMapController controller) {
                     _controller.complete(controller);
                   },
-                  // markers: {
-                  //   Marker(
-                  //     markerId: MarkerId('_currentPosition'),
-                  //     position: _current,
-                  //     icon: BitmapDescriptor.defaultMarker,
-                  //   ),
-                  // },
-                  // scrollGesturesEnabled: true,
-                  // myLocationButtonEnabled: true,
-                  // myLocationEnabled: true,
+                  // zoomControlsEnabled: false,
+                  zoomGesturesEnabled: true,
                 ),
               ),
-              const Gap(20.0),
+              Gap(20.0.h),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                padding: EdgeInsets.symmetric(horizontal: 18.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -139,57 +158,55 @@ class _DataFormState extends State<DataForm> {
                       obscure: true,
                       type: TextInputType.text,
                     ),
-                    const Gap(20),
+                    Gap(20.h),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         InputForm(
+                          controller: TextEditingController(text: date),
                           title: 'Date',
-                          hint: date,
-                          onChanged: (value) {
-                            //
-                          },
-                          width: 180,
+                          enable: false,
+                          width: 180.w,
                           type: TextInputType.text,
                         ),
                         InputForm(
                           title: 'Heure',
-                          hint: '$hour',
-                          onChanged: (value) {
-                            //
-                          },
-                          width: 135,
+                          enable: false,
+                          controller: TextEditingController(text: hour),
+                          width: 135.w,
                           type: TextInputType.text,
                         ),
                       ],
                     ),
-                    const Gap(20),
+                    Gap(20.h),
                     InputForm(
                       title: 'Description',
                       hint: 'Décrire l’inondation et le contexte approprié',
                       onChanged: (value) {
-                        //
+                        setState(() {
+                          description = value;
+                        });
                       },
                       type: TextInputType.text,
-                      height: 110,
+                      height: 110.h,
                       maxLine: 5,
                     ),
-                    const Gap(20),
+                    Gap(20.h),
                     Text(
                       'Intensité de l’inondation',
                       style: AppTheme.textSemiBoldH5,
                     ),
-                    const Gap(10),
+                    Gap(10.h),
                     Container(
-                      height: 40,
+                      height: 40.h,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey, width: 1),
+                        border: Border.all(color: Colors.grey, width: 1.w),
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                       child: DropdownButton(
                         hint: const Text('Evaluer l’intensité de l’inondation'),
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
                         value: dropdownValue,
                         onChanged: (newValue) {
                           setState(() {
@@ -199,11 +216,11 @@ class _DataFormState extends State<DataForm> {
                         isExpanded: true,
                         underline: const SizedBox(),
                         style: GoogleFonts.montserrat(
-                          fontSize: 12.0,
+                          fontSize: 14.sp,
                           fontWeight: FontWeight.w400,
                           color: Colors.black87,
                         ),
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(10.r),
                         icon: const Icon(
                           CupertinoIcons.chevron_down,
                           color: Colors.grey,
@@ -212,17 +229,17 @@ class _DataFormState extends State<DataForm> {
                         items: list.map<DropdownMenuItem<String>>((value) {
                           return DropdownMenuItem(
                             value: value,
-                            child: Text('$value'),
+                            child: Text(value),
                           );
                         }).toList(),
                       ),
                     ),
-                    const Gap(20),
+                    Gap(20.h),
                     Text(
                       'Image',
                       style: AppTheme.textSemiBoldH5,
                     ),
-                    const Gap(10),
+                    Gap(10.h),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -231,58 +248,51 @@ class _DataFormState extends State<DataForm> {
                             imageToBase64();
                           },
                           child: Container(
-                            width: 114,
-                            height: 115,
+                            width: 114.w,
+                            height: 115.h,
                             decoration: ShapeDecoration(
                               color: const Color(0xFF111D4A),
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8)),
+                                  borderRadius: BorderRadius.circular(8.r)),
                             ),
-                            child: const Icon(
+                            child: Icon(
                               CupertinoIcons.camera,
                               color: CupertinoColors.white,
-                              size: 50.0,
+                              size: 50.dm,
                             ),
                           ),
                         ),
                         Container(
-                          width: 236,
-                          height: 115,
+                          width: 236.w,
+                          height: 115.h,
                           decoration: ShapeDecoration(
                             image: DecorationImage(
                               image: _pickedFile != null
                                   ? FileImage(File(_pickedFile!.path))
                                       as ImageProvider<Object>
-                                  : const NetworkImage(
-                                      "https://s3-alpha-sig.figma.com/img/77c2/17ff/a13bdf834705c44aa9d1b227365086f4?Expires=1703462400&Signature=ilkN~4vfHguKnwyl15EQANw24kyr8g88cxaNNm9ZsweVttSSQist8bT66QyglZXplqyI-sdOGFzakYD2juM6gkfPhtZ5W5oaNDi9dIiyhLUg6TsmkULFSuJCQ~GzU2IUUwcb2J8JM4s9MXh7O5Kd5~8WeXBai19JVe~Nq3RYYZz7g8h0odUCbB0B~AJcSYXUJj3TIp5dmmzLr~DXMhaRRl7tiUdH5oydlgLb5TgmQakNM~LjNhwHWXM40HbcSYSLTOV8aaw4E5cMY93NTNusWoe2D0ySfaz72m~-rD7gXUphbCz6wGBMoo1FqSqpyCM6Z2W16mXA8XmbrMrMLqpyVQ__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4"),
-                              fit: BoxFit.fill,
+                                  : const AssetImage("images/image.png"),
+                              fit: BoxFit.cover,
                             ),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8)),
+                                borderRadius: BorderRadius.circular(8.r)),
                           ),
                         ),
                       ],
                     ),
-                    const Gap(50),
-                    Consumer<Alert>(
-                      builder: (context, alert, child) {
-                        return PrimaryButton(
-                          color: AppTheme.primaryColor,
-                          textColor: CupertinoColors.white,
-                          onPressed: () {
-                            Alert().sendAlert(
-                              position: position,
-                              // date: DateTime.now(),
-                              description: description,
-                              intensity: dropdownValue!,
-                              image: base64String!,
-                            );
-                          },
-                          title: 'Envoyer l’alerte',
+                    Gap(50.h),
+                    PrimaryButton(
+                      color: AppTheme.primaryColor,
+                      textColor: CupertinoColors.white,
+                      onPressed: () {
+                        Alert.sendAlert(
+                          position: _current,
+                          description: description,
+                          intensity: dropdownValue ?? 'null',
                         );
                       },
+                      title: 'Envoyer l’alerte',
                     ),
-                    const Gap(30),
+                    Gap(30.h),
                   ],
                 ),
               ),

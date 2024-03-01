@@ -1,30 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:mafuriko/controllers/auth.controller.dart';
+import 'package:go_router/go_router.dart';
+
+import 'package:mafuriko/providers/user.providers.dart';
+import 'package:mafuriko/routes/constants.dart';
 import 'package:mafuriko/utils/themes.dart';
-import 'package:mafuriko/views/authentication/login.dart';
 import 'package:mafuriko/widgets/button.dart';
 import 'package:mafuriko/widgets/form.dart';
-import 'package:mafuriko/widgets/linkText.dart';
+import 'package:mafuriko/widgets/link_text.dart';
 import 'package:mafuriko/widgets/section_title.dart';
-import 'package:provider/provider.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
-
-  static String id = '/register';
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  String _email = '';
-  String _number = '';
-  String _lastname = '';
-  String _firstname = '';
-  String _password = '';
-  String _confirmPassword = '';
 
   @override
   Widget build(BuildContext context) {
@@ -33,129 +28,103 @@ class _RegisterPageState extends State<RegisterPage> {
       child: Scaffold(
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0),
+            padding: EdgeInsets.symmetric(horizontal: 18.0.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Flexible(
                   child: ListView(
                     children: [
-                      const SizedBox(width: double.infinity, height: 25.0),
+                      SizedBox(width: 1.sw, height: 23.h),
                       Center(
                         child: Image.asset(
                           'images/Logo-blue.png',
                           scale: 1,
                         ),
                       ),
-                      const Gap(30),
+                      Gap(25.h),
                       const SectionTitle(title: 'Inscription'),
-                      const Gap(10),
+                      Gap(8.h),
                       InputForm(
                         title: 'Email',
                         hint: 'Entrer votre email',
                         type: TextInputType.emailAddress,
                         onChanged: (value) {
-                          setState(() {
-                            _email = value;
-                          });
+                          context.read<SignupBloc>().add(SignupEmailChangedEvent(value));
                         },
                       ),
-                      const Gap(17),
+                      Gap(13.h),
                       Row(
                         children: [
                           InputForm(
                             title: 'Nom ',
-                            hint: 'Entrer votre npm ',
+                            hint: 'Entrer votre nom ',
                             type: TextInputType.text,
-                            width: 148,
+                            width: 130.w,
                             onChanged: (value) {
-                              setState(() {
-                                _lastname = value;
-                              });
+                              context.read<SignupBloc>().add(SignupLastNameChangedEvent(value));
                             },
                           ),
-                          const Gap(25),
+                          const Spacer(),
                           InputForm(
                             title: 'Prénoms ',
                             hint: 'Entrer vos Prénoms ',
                             type: TextInputType.text,
-                            width: 180,
+                            width: 170.w,
                             onChanged: (value) {
-                              setState(() {
-                                _firstname = value;
-                              });
+                              context.read<SignupBloc>().add(SignupFirstNameChangedEvent(value));
                             },
                           ),
                         ],
                       ),
-                      const Gap(17),
+                      Gap(13.h),
                       InputForm(
                         title: 'Numéro de téléphone ',
                         hint: 'Entrer votre numéro de téléphone ',
                         type: TextInputType.phone,
                         onChanged: (value) {
-                          setState(() {
-                            _number = value;
-                          });
+                          context.read<SignupBloc>().add(SignupPhoneNumberChangedEvent(value));
                         },
                       ),
-                      const Gap(17),
+                      Gap(13.h),
                       InputForm(
                         title: 'Mot de passe',
                         hint: 'Entrer votre mot de passe',
                         type: TextInputType.text,
                         obscure: true,
                         onChanged: (value) {
-                          setState(() {
-                            _password = value;
-                          });
+                          context.read<SignupBloc>().add(SignupPasswordChangedEvent(value));
                         },
                       ),
-                      const Gap(17),
+                      Gap(13.h),
                       InputForm(
                         title: 'Confirmation',
-                        hint: 'confirmer le mot de passe',
+                        hint: 'Confirmer le mot de passe',
                         type: TextInputType.text,
                         obscure: true,
                         onChanged: (value) {
-                          setState(() {
-                            _confirmPassword = value;
-                          });
+                          context.read<SignupBloc>().add(SignupConfirmPasswordChangedEvent(value));
                         },
                       ),
-                      const Gap(50),
-                      Consumer<Authentication>(
-                        builder: (context, auth, child) {
+                      Gap(35.h),
+                      BlocBuilder<SignupBloc, SignupState>(
+                        builder: (context, state) {
                           return PrimaryButton(
-                            onPressed: _email.isEmpty ||
-                                    _confirmPassword.isEmpty ||
-                                    _lastname.isEmpty ||
-                                    _firstname.isEmpty
-                                ? null
-                                : () {
-//
-                                    auth.userRegister(
-                                      email: _email,
-                                      firstname: _firstname,
-                                      lastname: _lastname,
-                                      number: _number,
-                                      password: _password,
-                                      confirmPassword: _confirmPassword,
-                                      context: context,
-                                    );
-                                  },
+                            onPressed: state.isValid
+                                ? () => context.pushNamed(Paths.home)
+                                : null,
                             title: 'Créer un compte',
                             color: AppTheme.primaryColor,
                             textColor: Colors.white,
                           );
                         },
                       ),
-                      const Gap(20),
+                      Gap(15.h),
                       LinkText(
                         text: 'Vous avez déjà un compte?  ',
                         textLink: 'Connectez-vous',
-                        link: LoginPage.id,
-                        lineSize: 100,
+                        link: Paths.login,
+                        lineSize: 80.sp,
                       ),
                     ],
                   ),

@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gap/gap.dart';
 
 class InputForm extends StatelessWidget {
   const InputForm({
     super.key,
-    required this.title,
-    required this.hint,
+     this.title,
     required this.type,
+    this.hint,
     this.onChanged,
+    this.controller,
     this.obscure,
     this.enable,
     this.width,
@@ -17,8 +18,9 @@ class InputForm extends StatelessWidget {
     this.maxLine,
   });
 
-  final String title;
-  final String hint;
+  final String? title;
+  final TextEditingController? controller;
+  final String? hint;
   final TextInputType type;
   final bool? obscure;
   final bool? enable;
@@ -33,40 +35,47 @@ class InputForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          title,
+          title ?? "",
           style: GoogleFonts.montserrat(
-            fontSize: 14.0,
+            fontSize: 14.sp,
             fontWeight: FontWeight.w500,
             color: Colors.black,
           ),
         ),
-        const Gap(10),
+        Gap(8.h),
         Form(
           child: Container(
-            height: height ?? 40,
+            height: height ?? 40.h,
             width: width,
-            padding: EdgeInsets.only(bottom: 10),
+            // padding: EdgeInsets.only(bottom: 8.h),
             decoration: ShapeDecoration(
               shape: RoundedRectangleBorder(
                 side: const BorderSide(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(8.r),
               ),
+              color: title != null? null : Colors.white,
             ),
             child: TextField(
+              controller: controller,
               onChanged: onChanged,
               keyboardType: type,
               obscureText: obscure ?? false,
               maxLines: maxLine ?? 1,
+              style: GoogleFonts.montserrat(
+                color: Colors.black,
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w500,
+              ),
               decoration: InputDecoration(
                 enabled: enable ?? true,
                 hintText: hint,
                 hintStyle: GoogleFonts.montserrat(
-                  fontSize: 12.0,
+                  fontSize: 12.sp,
                   fontWeight: FontWeight.w400,
                   color: Colors.black87,
                 ),
                 contentPadding:
-                    const EdgeInsets.only(left: 20.0, bottom: 12, top: 0),
+                    EdgeInsets.only(left: 15.w, bottom: 11..w, top: 2.h),
                 border: InputBorder.none,
                 focusedBorder: InputBorder.none,
               ),

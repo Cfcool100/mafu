@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mafuriko/views/authentication/login.dart';
-import 'package:mafuriko/views/authentication/register.dart';
-import 'package:mafuriko/views/home/home.view.dart';
+import 'package:mafuriko/routes/constants.dart';
 import 'package:mafuriko/widgets/button.dart';
 
 class OnBoarding extends StatelessWidget {
   const OnBoarding({super.key});
-  static String id = '/onboarding';
 
   @override
   Widget build(BuildContext context) {
@@ -36,18 +36,18 @@ class OnBoarding extends StatelessWidget {
                   Text(
                     'Mafuriko',
                     style: GoogleFonts.montserrat(
-                      color: Color(0xFFFFF8F0),
-                      fontSize: 25,
+                      color: const Color(0xFFFFF8F0),
+                      fontSize: 25.sp,
                       fontWeight: FontWeight.w600,
-                      letterSpacing: 0.36,
+                      letterSpacing: 0.36.sp,
                     ),
                   ),
                   Text(
                     'Surveillance en temps réel des inondations',
-                    strutStyle: StrutStyle(leading: 1),
+                    strutStyle: const StrutStyle(leading: 1),
                     style: GoogleFonts.montserrat(
-                      color: Color(0xFFFFF8F0),
-                      fontSize: 13.3,
+                      color: const Color(0xFFFFF8F0),
+                      fontSize: 13.3.sp,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -60,25 +60,27 @@ class OnBoarding extends StatelessWidget {
                 children: [
                   PrimaryButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, RegisterPage.id);
+                      context.pushNamed(Paths.register);
                     },
                     color: const Color(0xFF111D4A),
                     textColor: Colors.white,
                     title: 'Inscription',
                   ),
-                  const SizedBox(height: 10),
+                  Gap(10.h),
                   PrimaryButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, LoginPage.id);
+                      context.pushNamed(Paths.login);
                     },
                     title: 'Connexion',
                   ),
                 ],
               ),
             ),
-            const Expanded(
-              // flex: 1,
-              child: Text('by GEODAFTAR, 2023.'),
+            Expanded(
+              child: Text(
+                'by GEODAFTAR, 2023.',
+                style: GoogleFonts.montserrat(fontSize: 13.sp),
+              ),
             )
           ],
         )),

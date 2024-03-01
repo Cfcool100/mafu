@@ -1,10 +1,11 @@
-import 'package:mongo_dart/mongo_dart.dart';
+
 
 class UserModel {
-  final ObjectId? id;
+  final String? id;
   final String? firstName;
   final String? lastName;
   final String userNumber;
+  final String userEmail;
   final String? userPassword;
   final String? parentalCode;
 
@@ -12,6 +13,7 @@ class UserModel {
     this.id,
     this.firstName,
     this.lastName,
+    required this.userEmail,
     required this.userNumber,
     this.userPassword,
     this.parentalCode,
@@ -21,17 +23,19 @@ class UserModel {
     return {
       'userFirstName': firstName,
       'userLastName': lastName,
+      'userEmail': userEmail,
       'userNumber': userNumber,
       'codeSecurite': userPassword,
       'codeParental': parentalCode
     };
   }
 
-  factory UserModel.fromJson(Map<String, dynamic> json, ObjectId id) {
+  factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: id,
+      id: json['_id'],
       firstName: json['userFirstName'],
       lastName: json['userLastName'],
+      userEmail: json['userEmail'],
       userNumber: json['userNumber'],
       userPassword: json['codeSecurite'],
       parentalCode: json['codeParental'],
