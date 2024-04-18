@@ -1,10 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mafuriko/models/alert.models.dart';
 // import 'package:location/location.dart';
 // import 'package:mafuriko/utils/pop_up.dart';
@@ -15,35 +17,35 @@ class Alert extends ChangeNotifier {
     required LatLng position,
     required String description,
     required String intensity,
-    // required XFile image,
+    required XFile image,
   }) async {
     final dio = Dio();
 
-    // final FormData formData = FormData();
+    final FormData formData = FormData();
 
     try {
-      // formData.files.addAll([
-      //   MapEntry(
-      //       "files", await MultipartFile.fromFile(File(image.path).path)),
-      // ]);
+      formData.files.addAll([
+        MapEntry("files", await MultipartFile.fromFile(File(image.path).path)),
+      ]);
 
-      // formData.fields.add(MapEntry('longitude', position.longitude.toString()));
-      // formData.fields.add(MapEntry('latitude', position.latitude.toString()));
-      // formData.fields.add(MapEntry('floodDescription', description));
-      // formData.fields.add(MapEntry('floodIntensity', intensity));
+      formData.fields.add(MapEntry('longitude', position.longitude.toString()));
+      formData.fields.add(MapEntry('latitude', position.latitude.toString()));
+      formData.fields.add(MapEntry('floodDescription', description));
+      formData.fields.add(MapEntry('floodIntensity', intensity));
 
-      // debugPrint('>>>>>>>>>>>>>>>>>>>>${formData.fields}>>>>>>>>>>>>>>>>>>>>');
-      // debugPrint('========================${formData.files.first}========================');
+      debugPrint('>>>>>>>>>>>>>>>>>>>>${formData.fields}>>>>>>>>>>>>>>>>>>>>');
+      debugPrint(
+          '========================${formData.files.first}========================');
 
-      final formData = FormData.fromMap({
-        'longitude': '${position.longitude}',
-        'latitude': '${position.latitude}',
-        'floodDescription': description,
-        'floodIntensity': intensity,
-        // 'date': DateTime.now().toIso8601String(),
-        // 'floodImages': await MultipartFile.fromFile(image.path,
-        //     filename: 'image.jpg'),
-      });
+      // final formData = FormData.fromMap({
+      //   'longitude': '${position.longitude}',
+      //   'latitude': '${position.latitude}',
+      //   'floodDescription': description,
+      //   'floodIntensity': intensity,
+      //   // 'date': DateTime.now().toIso8601String(),
+      //   // 'floodImages': await MultipartFile.fromFile(image.path,
+      //   //     filename: 'image.jpg'),
+      // });
 
       // formData.files.add(value)
       final response = await dio.post(
@@ -85,12 +87,12 @@ class Alert extends ChangeNotifier {
         pref.setString('FloodAlert', jsonEncode(jsonList));
 
         // Afficher les données pour vérification
-        print('Stored Flood Alerts: $alertList');
-        print(
-            '>>>>>>>>>>>>>>>>>>\n*********************\n${alertList}\n>>>>>>>>>>>>>>>>>>\n*********************');
+        // print('Stored Flood Alerts: $alertList');
+        debugPrint(
+            '>>>>>>>>>>>>>>>>>>\n*********************\n$alertList\n>>>>>>>>>>>>>>>>>>\n*********************');
       }
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
     }
   }
 }

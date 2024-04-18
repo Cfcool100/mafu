@@ -6,14 +6,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mafuriko/utils/themes.dart';
 
 class AlertInfosCard extends StatelessWidget {
-  const AlertInfosCard({super.key, this.spaceBetween});
+  const AlertInfosCard({super.key, this.spaceBetween, this.scene, this.intensity, this.postDate, this.style});
 
   final double? spaceBetween;
+  final String? scene;
+  final String? intensity;
+  final DateTime? postDate;
+  final TextStyle? style;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 133.w,
+      width: 312.w,
       margin:
           EdgeInsets.symmetric(horizontal: spaceBetween ?? 15.w, vertical: 5.h),
       decoration: BoxDecoration(
@@ -32,7 +36,7 @@ class AlertInfosCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            height: 73.h,
+            height: 181.h,
             decoration: BoxDecoration(
               image: const DecorationImage(
                 image: AssetImage('images/background.jpg'),
@@ -43,31 +47,31 @@ class AlertInfosCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 11.5.h),
+            padding: EdgeInsets.only(left: 18.w, top: 30.h, right: 18.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Marché cocovico',
+                  '$scene',
                   textAlign: TextAlign.start,
                   style: AppTheme.textBlackH6
-                      .copyWith(fontWeight: FontWeight.w400),
+                      .copyWith(fontWeight: FontWeight.w400, fontSize: 16.sp),
                 ),
                 Text(
                   'Cocody, Abidjan',
                   style: AppTheme.textBlackH6
-                      .copyWith(fontSize: 8.sp, fontWeight: FontWeight.w300),
+                      .copyWith(fontSize: 12.sp, fontWeight: FontWeight.w300),
                 ),
-                Gap(20.h),
+                Gap(75.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '4.3 CM',
-                      style: GoogleFonts.montserrat(fontSize: 14.sp),
+                      '${intensity?.toUpperCase()}',
+                      style: style ?? GoogleFonts.montserrat(fontSize: 14.sp),
                     ),
                     Text(
-                      '23 min',
+                      '$postDate',
                       style: GoogleFonts.montserrat(fontSize: 14.sp),
                     ),
                   ],

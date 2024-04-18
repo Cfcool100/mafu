@@ -7,6 +7,7 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mafuriko/providers/authentication/authentication_bloc.dart';
 import 'package:mafuriko/routes/constants.dart';
+import 'package:mafuriko/utils/pop_up.dart';
 import 'package:mafuriko/utils/themes.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -89,6 +90,23 @@ class _ProfilePageState extends State<ProfilePage> {
                   top: .1..sh,
                   child: Column(
                     children: [
+                      OutlinedButton(
+                        style: ButtonStyle(
+                          side: MaterialStatePropertyAll(
+                            BorderSide(color: Colors.red, width: .5.w),
+                          ),
+                        ),
+                        onPressed: () {
+                          PopUp.disconnetRequest(context);
+                          // successAuth(context, message: 'Auth successful')
+                        },
+                        child: Text(
+                          'Deconnection',
+                          style:
+                              AppTheme.textBlackH6.copyWith(color: Colors.red),
+                        ),
+                      ),
+                      Gap(20.h),
                       Text(
                         'En cas de de besoin, contactez notre équipe support.',
                         style: AppTheme.textSemiRegularH5.copyWith(

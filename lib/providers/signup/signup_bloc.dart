@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:formz/formz.dart';
 import 'package:mafuriko/controllers/controller.dart';
 import 'package:mafuriko/validators/validators.dart';
@@ -41,6 +42,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
     emit(state.copyWith(
         newFirstname: firstname,
         newLastname: Name.dirty(state.lastname.value),
+        newEmail: Email.dirty(state.email.value),
         newPhoneNumber: PhoneNumber.dirty(state.phoneNumber.value),
         newPassword: PasswordValidator.dirty(state.password.value),
         newConfirmPassword:
@@ -63,6 +65,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
     emit(state.copyWith(
         newFirstname: Name.dirty(state.firstname.value),
         newLastname: lastname,
+        newEmail: Email.dirty(state.email.value),
         newPhoneNumber: PhoneNumber.dirty(state.phoneNumber.value),
         newPassword: PasswordValidator.dirty(state.password.value),
         newConfirmPassword:
@@ -117,6 +120,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
         newFirstname: Name.dirty(state.firstname.value),
         newLastname: Name.dirty(state.lastname.value),
         newPhoneNumber: phone,
+        newEmail: Email.dirty(state.email.value),
         newPassword: PasswordValidator.dirty(state.password.value),
         newConfirmPassword:
             PasswordValidator.dirty(state.confirmPassword.value),
@@ -138,6 +142,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
         ]),
         newFirstname: Name.dirty(state.firstname.value),
         newLastname: Name.dirty(state.lastname.value),
+        newEmail: Email.dirty(state.email.value),
         newPhoneNumber: PhoneNumber.dirty(state.phoneNumber.value),
         newPassword: pass,
         newConfirmPassword:
@@ -163,6 +168,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
         ]),
         newFirstname: Name.dirty(state.firstname.value),
         newLastname: Name.dirty(state.lastname.value),
+        newEmail: Email.dirty(state.email.value),
         newPhoneNumber: PhoneNumber.dirty(state.phoneNumber.value),
         newPassword: PasswordValidator.dirty(state.password.value),
         newConfirmPassword: confirmPass,
@@ -193,7 +199,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
           emit(state.copyWith(newStatus: FormzSubmissionStatus.failure));
         }
       } catch (e) {
-        print(e);
+        debugPrint(e.toString());
         emit(state.copyWith(newStatus: FormzSubmissionStatus.failure));
       }
     }

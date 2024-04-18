@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image/image.dart' as img;
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
@@ -11,7 +13,11 @@ import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:location/location.dart';
+
 import 'package:mafuriko/controllers/alert.controller.dart';
+import 'package:mafuriko/utils/pop_up.dart';
 import 'package:mafuriko/utils/themes.dart';
 import 'package:mafuriko/widgets/button.dart';
 import 'package:mafuriko/widgets/form.dart';
@@ -28,8 +34,11 @@ class _DataFormState extends State<DataForm> {
   @override
   void initState() {
     super.initState();
-    _getLocate();
+    getLocate();
   }
+
+  Location location = Location();
+  bool isLoad = false;
 
   List<String> list = <String>['Elevé', 'Moyen', 'Faible'];
 
@@ -37,8 +46,8 @@ class _DataFormState extends State<DataForm> {
   final ImagePicker _picker = ImagePicker();
   String? base64String;
 
-  Future<void> imageToBase64() async {
-    final pickedImage = await _picker.pickImage(source: ImageSource.camera);
+  Future<void> imageToBase64(ImageSource source) async {
+    final pickedImage = await _picker.pickImage(source: source);
 
     if (pickedImage != null) {
       setState(() {
@@ -65,57 +74,134 @@ class _DataFormState extends State<DataForm> {
     }
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+
+    _controller.isCompleted;
+  }
+
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
-  LatLng _current = const LatLng(9.103, 5.51);
+  LatLng _current = const LatLng(0, 9.450152);
 
-  Future<Position> _getLocate() async {
+  Future<void> getLocate() async {
+    setState(() {
+      isLoad = true;
+    });
+
     bool serviceEnabled;
-    LocationPermission permission;
+    PermissionStatus permissionGranted;
+    // LocationData _locationData;
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-
+    serviceEnabled = await location.serviceEnabled();
     if (!serviceEnabled) {
-      return Future.error('Location services are disabled');
-    }
-
-    permission = await Geolocator.checkPermission();
-
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-
-      if (permission == LocationPermission.denied) {
-        return Future.error("Location permission denied");
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
+        return;
       }
     }
 
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error('Location permissions are permanently denied');
+    permissionGranted = await location.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+      permissionGranted = await location.requestPermission();
+      if (permissionGranted != PermissionStatus.granted) {
+        return;
+      }
     }
 
-    Position position = await Geolocator.getCurrentPosition();
+    location.onLocationChanged.listen((currentLocation) {
+      if (mounted) {
+        // Check if the widget is still mounted
+        setState(() {
+          if (currentLocation.latitude != null &&
+              currentLocation.longitude != null) {
+            isLoad = false;
+            _current =
+                LatLng(currentLocation.latitude!, currentLocation.longitude!);
 
-    setState(() {
-      _current = const LatLng(-3.921089, 5.318270);
+            debugPrint(':::::::::::::::::::::::::$currentLocation');
+          }
+        });
+      }
     });
-
-    return position;
   }
 
-  // final position = {
-  //   'lat': '${_current.latitude}',
-  //   'lon': '${_current.longitude}',
-  // };
-  final date =
-      '${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}';
-  final hour =
-      '${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, "0")}';
+  void showCustomBottomSheet(BuildContext context) {
+    showBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 150.h,
+          decoration: BoxDecoration(
+              color: Colors.white60,
+              border: const Border(top: BorderSide(width: .3)),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(15.r),
+                  topRight: Radius.circular(15.r))),
+          child: Column(
+// mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Gap(8.h),
+              Text(
+                'Choisissez comment envoyer l\'image :',
+                style: GoogleFonts.montserrat(
+                    fontSize: 16.sp, fontWeight: FontWeight.w600),
+              ),
+              ListTile(
+                leading: const Icon(FlutterRemix.gallery_line),
+                title: Text(
+                  'Galérie',
+                  style: GoogleFonts.montserrat(fontSize: 15.sp),
+                ),
+                onTap: () {
+                  imageToBase64(ImageSource.gallery);
+                  context.pop();
+                },
+              ),
+              ListTile(
+                leading: const Icon(CupertinoIcons.camera),
+                title: Text(
+                  'Caméra',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 15.sp,
+                  ),
+                ),
+                onTap: () {
+                  imageToBase64(ImageSource.camera);
+                  context.pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /*
+A AJOUTER AU DESSUS DE EXPORT const upload = multer({ storage: storage });
+
+  var limits = {
+files: 1, // allow only 1 file per request
+fileSize: 10 * 1024 * 1024, // 1 MB (max file size)
+};
+   */
+
   String description = '';
   String? dropdownValue;
   List<String> images = [
     'base64String',
   ];
+
+  String formatDate(DateTime date) {
+    return DateFormat('dd/MM/yyyy').format(date);
+  }
+
+  String formatHour(DateTime date) {
+    return DateFormat('HH:mm').format(date);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -129,20 +215,33 @@ class _DataFormState extends State<DataForm> {
             children: [
               SizedBox(
                 width: double.infinity,
-                height: 316.w,
-                child: GoogleMap(
-                  mapType: MapType.normal,
-                  initialCameraPosition: CameraPosition(
-                    target: _current,
-                    zoom: 15,
-                  ),
-                  myLocationEnabled: true,
-                  myLocationButtonEnabled: false,
-                  onMapCreated: (GoogleMapController controller) {
-                    _controller.complete(controller);
-                  },
-                  // zoomControlsEnabled: false,
-                  zoomGesturesEnabled: true,
+                height: 316.h,
+                child: Stack(
+                  children: [
+                    GoogleMap(
+                      key: ValueKey(isLoad),
+                      mapType: MapType.normal,
+                      initialCameraPosition: CameraPosition(
+                        target: isLoad
+                            ? const LatLng(0.393037, 9.450152)
+                            : _current,
+                        zoom: 18,
+                      ),
+                      onMapCreated: (GoogleMapController controller) {
+                        _controller.complete(controller);
+                      },
+                      myLocationEnabled: true,
+                      myLocationButtonEnabled: false,
+                      zoomControlsEnabled: false,
+                    ),
+                    if (isLoad)
+                      Center(
+                        child: SpinKitCubeGrid(
+                          color: Colors.blueAccent.shade100,
+                          size: 25.h,
+                        ),
+                      )
+                  ],
                 ),
               ),
               Gap(20.0.h),
@@ -152,9 +251,8 @@ class _DataFormState extends State<DataForm> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const InputForm(
-                      title: 'Localisation',
-                      hint: 'Position actuelle',
-                      enable: false,
+                      title: 'Lieu',
+                      hint: 'Entrer le lieu de l\'alerte',
                       obscure: true,
                       type: TextInputType.text,
                     ),
@@ -163,8 +261,9 @@ class _DataFormState extends State<DataForm> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         InputForm(
-                          controller: TextEditingController(text: date),
-                          title: 'Date',
+                          controller: TextEditingController(
+                              text: formatDate(DateTime.now())),
+                          title: 'Date ${_current.longitude}',
                           enable: false,
                           width: 180.w,
                           type: TextInputType.text,
@@ -172,7 +271,8 @@ class _DataFormState extends State<DataForm> {
                         InputForm(
                           title: 'Heure',
                           enable: false,
-                          controller: TextEditingController(text: hour),
+                          controller: TextEditingController(
+                              text: formatHour(DateTime.now())),
                           width: 135.w,
                           type: TextInputType.text,
                         ),
@@ -245,7 +345,8 @@ class _DataFormState extends State<DataForm> {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            imageToBase64();
+                            // imageToBase64();
+                            showCustomBottomSheet(context);
                           },
                           child: Container(
                             width: 114.w,
@@ -285,10 +386,13 @@ class _DataFormState extends State<DataForm> {
                       textColor: CupertinoColors.white,
                       onPressed: () {
                         Alert.sendAlert(
-                          position: _current,
-                          description: description,
-                          intensity: dropdownValue ?? 'null',
-                        );
+                            position: _current,
+                            description: description,
+                            intensity: dropdownValue ?? 'null',
+                            image: _pickedFile!);
+                        PopUp.sendAlertSuccess(context,
+                            message: '''Données chargées avec succès.
+Revenir à la page de données''');
                       },
                       title: 'Envoyer l’alerte',
                     ),

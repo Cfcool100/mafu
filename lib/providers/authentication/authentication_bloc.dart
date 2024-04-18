@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mafuriko/models/user.models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,10 +19,10 @@ class AuthenticationBloc
     _tryGetUser().asStream().listen((user) {
       if (user != null) {
         add(AuthenticationStatusChanged(AuthenticationStatus.authenticated));
-        print('success authentication ${user.firstName} !');
+        debugPrint('success authentication ${user.firstName} !');
       } else {
         add(AuthenticationStatusChanged(AuthenticationStatus.unauthenticated));
-        print('failed authentication!');
+        debugPrint('failed authentication!');
       }
     });
   }
@@ -64,20 +65,20 @@ class AuthenticationBloc
 
   Future<UserModel?> _tryGetUser() async {
     try {
-      final SharedPreferences _pref = await SharedPreferences.getInstance();
+      final SharedPreferences pref = await SharedPreferences.getInstance();
 
-      var userData = _pref.getString('userData');
-      if (userData != null ) {
+      var userData = pref.getString('userData');
+      if (userData != null) {
         var decodedData = jsonDecode(userData);
         final user = UserModel.fromJson(decodedData);
         return user;
       } else {
-        print('::::::::::::::::: Nothing cached :::::::::::::::::');
+        debugPrint('::::::::::::::::: Nothing cached :::::::::::::::::');
         return null;
       }
     } catch (e) {
-      print(e);
-      print(
+      debugPrint(e.toString());
+      debugPrint(
           'Une erreur s\'est produite lors de la récupération des données utilisateur en cache: \n$e');
       return null;
     }
