@@ -152,7 +152,7 @@ class _DataFormState extends State<DataForm> {
               ListTile(
                 leading: const Icon(FlutterRemix.gallery_line),
                 title: Text(
-                  'Galérie',
+                  'Galerie',
                   style: GoogleFonts.montserrat(fontSize: 15.sp),
                 ),
                 onTap: () {
