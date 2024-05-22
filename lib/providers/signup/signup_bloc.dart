@@ -37,7 +37,10 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
   }
   FutureOr<void> _signupFirstNameChangedEvent(
       SignupFirstNameChangedEvent event, Emitter<SignupState> emit) {
-    final firstname = Name.dirty(event.firstname);
+    final firstname = Name.dirty(
+        event.firstname[0].toUpperCase() + event.firstname.substring(1));
+
+    debugPrint('signup firstname: $firstname');
 
     emit(state.copyWith(
         newFirstname: firstname,
@@ -60,7 +63,10 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
 
   FutureOr<void> _signupLastNameChangedEvent(
       SignupLastNameChangedEvent event, Emitter<SignupState> emit) {
-    final lastname = Name.dirty(event.lastname);
+    final lastname = Name.dirty(
+        event.lastname[0].toUpperCase() + event.lastname.substring(1));
+
+    debugPrint('signup lastname: $lastname');
 
     emit(state.copyWith(
         newFirstname: Name.dirty(state.firstname.value),
@@ -85,6 +91,8 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
       SignupEmailChangedEvent event, Emitter<SignupState> emit) {
     final mail = Email.dirty(event.email);
 
+    debugPrint('signup mail: $mail');
+
     emit(state.copyWith(
         newFirstname: Name.dirty(state.firstname.value),
         newLastname: Name.dirty(state.lastname.value),
@@ -108,6 +116,8 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
       SignupPhoneNumberChangedEvent event, Emitter<SignupState> emit) {
     final phone = PhoneNumber.dirty(event.phoneNumber);
 
+    debugPrint('signup phone: $phone');
+
     emit(state.copyWith(
         newIsValid: Formz.validate([
           state.firstname,
@@ -130,6 +140,8 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
   FutureOr<void> _signupPasswordChangedEvent(
       SignupPasswordChangedEvent event, Emitter<SignupState> emit) {
     final pass = PasswordValidator.dirty(event.password);
+
+    debugPrint('signup password: $pass');
     emit(
       state.copyWith(
         newIsValid: Formz.validate([
@@ -155,6 +167,8 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
   FutureOr<void> _signupConfirmPasswordChangedEvent(
       SignupConfirmPasswordChangedEvent event, Emitter<SignupState> emit) {
     final confirmPass = PasswordValidator.dirty(event.confirmPassword);
+
+    debugPrint('signup confirmPass: $confirmPass');
 
     emit(
       state.copyWith(

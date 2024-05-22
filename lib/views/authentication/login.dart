@@ -11,7 +11,6 @@ import 'package:mafuriko/widgets/form.dart';
 import 'package:mafuriko/widgets/link_text.dart';
 import 'package:mafuriko/widgets/section_title.dart';
 
-
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -20,7 +19,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -72,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                       InputForm(
                         title: 'Mot de passe',
                         hint: 'Entrer votre mot de passe',
-                        type: TextInputType.text,
+                        type: TextInputType.number,
                         obscure: true,
                         onChanged: (value) {
                           context

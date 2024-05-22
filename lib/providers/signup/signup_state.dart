@@ -21,6 +21,7 @@ class SignupState extends Equatable {
 
   @override
   List<Object> get props => [
+        email,
         firstname,
         lastname,
         phoneNumber,
@@ -34,7 +35,7 @@ class SignupState extends Equatable {
     PhoneNumber? newPhoneNumber,
     Name? newFirstname,
     Name? newLastname,
-    Email? newEmail,  
+    Email? newEmail,
     PasswordValidator? newPassword,
     PasswordValidator? newConfirmPassword,
     bool? newIsValid,

@@ -123,7 +123,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         InputForm(
                           title: 'Mot de passe',
                           hint: 'Entrer votre mot de passe',
-                          type: TextInputType.text,
+                          type: TextInputType.number,
                           obscure: true,
                           onChanged: (value) {
                             context
