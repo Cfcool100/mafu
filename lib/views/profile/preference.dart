@@ -64,7 +64,7 @@ class _PreferenceState extends State<Preference> with RestorationMixin {
                       ),
                       activeTrackColor: Colors.green,
                       inactiveTrackColor: Colors.grey.shade800,
-                      thumbColor: const MaterialStatePropertyAll(Colors.white),
+                      thumbColor: const WidgetStatePropertyAll(Colors.white),
                     ),
                     SwitchListTile(
                       value: switchValueB.value,
@@ -80,7 +80,7 @@ class _PreferenceState extends State<Preference> with RestorationMixin {
                       ),
                       activeTrackColor: Colors.green,
                       inactiveTrackColor: Colors.grey.shade800,
-                      thumbColor: const MaterialStatePropertyAll(Colors.white),
+                      thumbColor: const WidgetStatePropertyAll(Colors.white),
                     ),
                   ],
                 ),

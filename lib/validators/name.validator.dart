@@ -1,16 +1,13 @@
 import 'package:formz/formz.dart';
 
-enum NameError {
-  empty,
-  invalid
-}
+enum NameError { empty, invalid }
 
 class Name extends FormzInput<String, NameError> {
   const Name.pure() : super.pure('');
   const Name.dirty([super.value = '']) : super.dirty();
 
   static final RegExp _nameRegExp = RegExp(
-    r'^[A-Z][a-zA-Z]{1,}$',
+    r"^[a-zA-Z][a-zA-Z\é\è\ê\']*(\s+[A-Z][a-zA-Z\é\è\ê\']*)*$",
   );
 
   @override
@@ -18,15 +15,13 @@ class Name extends FormzInput<String, NameError> {
     if (value.isNotEmpty == false) {
       return NameError.empty;
     }
-    return _nameRegExp.hasMatch(value)
-        ? null
-        : NameError.invalid;
+    return _nameRegExp.hasMatch(value) ? null : NameError.invalid;
   }
 }
 
 extension ExplanationName on NameError {
   String get number {
-    switch(this) {
+    switch (this) {
       case NameError.invalid:
         return "This is not a valid name";
       default:

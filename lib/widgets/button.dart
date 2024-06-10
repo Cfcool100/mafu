@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:formz/formz.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mafuriko/utils/themes.dart';
 
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
@@ -42,7 +43,10 @@ class PrimaryButton extends StatelessWidget {
         side: (color != null) ? BorderSide.none : const BorderSide(),
       ),
       child: status != null && status!.isInProgress
-          ? const CircularProgressIndicator(color: Colors.white)
+          ? Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.h),
+              child: CircularProgressIndicator(color: AppTheme.primaryColor),
+            )
           : Text(
               title,
               style: GoogleFonts.montserrat(

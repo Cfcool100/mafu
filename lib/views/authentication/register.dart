@@ -158,6 +158,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     }
                                   : null,
                               title: 'Créer un compte',
+                              status: state.status,
                               color: AppTheme.primaryColor,
                               textColor: Colors.white,
                             );

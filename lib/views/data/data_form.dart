@@ -253,7 +253,6 @@ fileSize: 10 * 1024 * 1024, // 1 MB (max file size)
                     const InputForm(
                       title: 'Lieu',
                       hint: 'Entrer le lieu de l\'alerte',
-                      obscure: true,
                       type: TextInputType.text,
                     ),
                     Gap(20.h),
@@ -263,7 +262,7 @@ fileSize: 10 * 1024 * 1024, // 1 MB (max file size)
                         InputForm(
                           controller: TextEditingController(
                               text: formatDate(DateTime.now())),
-                          title: 'Date ${_current.longitude}',
+                          title: 'Date',
                           enable: false,
                           width: 180.w,
                           type: TextInputType.text,

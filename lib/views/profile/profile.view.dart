@@ -92,16 +92,16 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       OutlinedButton(
                         style: ButtonStyle(
-                          side: MaterialStatePropertyAll(
+                          side: WidgetStatePropertyAll(
                             BorderSide(color: Colors.red, width: .5.w),
                           ),
                         ),
                         onPressed: () {
-                          PopUp.disconnetRequest(context);
+                          PopUp.disconnectRequest(context);
                           // successAuth(context, message: 'Auth successful')
                         },
                         child: Text(
-                          'Deconnection',
+                          'Déconnexion',
                           style:
                               AppTheme.textBlackH6.copyWith(color: Colors.red),
                         ),

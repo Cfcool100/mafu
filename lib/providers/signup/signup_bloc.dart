@@ -38,7 +38,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
   FutureOr<void> _signupFirstNameChangedEvent(
       SignupFirstNameChangedEvent event, Emitter<SignupState> emit) {
     final firstname = Name.dirty(
-        event.firstname[0].toUpperCase() + event.firstname.substring(1));
+        event.firstname[0].toUpperCase() + event.firstname.substring(1).trim());
 
     debugPrint('signup firstname: $firstname');
 
@@ -64,7 +64,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
   FutureOr<void> _signupLastNameChangedEvent(
       SignupLastNameChangedEvent event, Emitter<SignupState> emit) {
     final lastname = Name.dirty(
-        event.lastname[0].toUpperCase() + event.lastname.substring(1));
+        event.lastname[0].toUpperCase() + event.lastname.substring(1).trim());
 
     debugPrint('signup lastname: $lastname');
 
@@ -89,7 +89,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
 
   FutureOr<void> _signupEmailChangedEvent(
       SignupEmailChangedEvent event, Emitter<SignupState> emit) {
-    final mail = Email.dirty(event.email);
+    final mail = Email.dirty(event.email.trim());
 
     debugPrint('signup mail: $mail');
 

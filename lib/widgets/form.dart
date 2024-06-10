@@ -6,7 +6,7 @@ import 'package:gap/gap.dart';
 class InputForm extends StatelessWidget {
   const InputForm({
     super.key,
-     this.title,
+    this.title,
     required this.type,
     this.hint,
     this.onChanged,
@@ -53,7 +53,7 @@ class InputForm extends StatelessWidget {
                 side: const BorderSide(color: Colors.grey),
                 borderRadius: BorderRadius.circular(8.r),
               ),
-              color: title != null? null : Colors.white,
+              color: title != null ? null : Colors.white,
             ),
             child: TextField(
               controller: controller,
@@ -66,6 +66,7 @@ class InputForm extends StatelessWidget {
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w500,
               ),
+              textCapitalization: TextCapitalization.words,
               decoration: InputDecoration(
                 enabled: enable ?? true,
                 hintText: hint,

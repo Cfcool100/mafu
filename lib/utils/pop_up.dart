@@ -54,7 +54,7 @@ class PopUp {
                   onPressed: () {
                     //
                   },
-                  title: 'Page D\'acceuill',
+                  title: "Page D’accueil",
                   width: 196,
                   color: const Color(0XFF111D4A),
                   textColor: Colors.white,
@@ -66,6 +66,7 @@ class PopUp {
       },
     );
   }
+
   static Future<void> sendAlertSuccess(BuildContext context,
       {required String message}) async {
     return await showDialog(
@@ -122,7 +123,7 @@ class PopUp {
     );
   }
 
-  static Future<void> disconnetRequest(BuildContext context) async {
+  static Future<void> disconnectRequest(BuildContext context) async {
     return await showDialog(
       context: context,
       builder: (context) {
@@ -150,7 +151,7 @@ class PopUp {
                   height: 24,
                 ),
                 Text(
-                  'Etes vous sûr de vouloir vous deconnecter',
+                  'Êtes vous sûr de vouloir vous déconnectez',
                   textAlign: TextAlign.center,
                   style: Theme.of(context)
                       .textTheme
@@ -165,12 +166,14 @@ class PopUp {
                   children: [
                     PrimaryButton(
                       onPressed: () {
-                        context.read<AuthenticationBloc>().add(AuthenticationLogoutRequested());
-                            context.pushNamed(Paths.onboarding);
+                        context
+                            .read<AuthenticationBloc>()
+                            .add(AuthenticationLogoutRequested());
+                        context.pushNamed(Paths.onboarding);
                       },
                       title: 'Oui',
                       width: 70.w,
-                      color: const Color(0XFF111D4A) ,
+                      color: const Color(0XFF111D4A),
                       textColor: Colors.white,
                     ),
                     PrimaryButton(
