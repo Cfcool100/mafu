@@ -17,47 +17,43 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
           email: Email.pure(),
           status: FormzSubmissionStatus.initial,
         )) {
-    on<SignInEmailChangedEvent>(_signInEmailrChanged);
+    on<SignInEmailChangedEvent>(_signInEmailChanged);
     on<SignInPasswordChangedEvent>(_signInPasswordChangedEvent);
     on<SubmitEvent>(_submitEvent);
   }
 
-  FutureOr<void> _signInEmailrChanged(SignInEmailChangedEvent event, Emitter<SignInState> emit) {
-
-    final mail = Email.dirty(event.email);
+  FutureOr<void> _signInEmailChanged(
+      SignInEmailChangedEvent event, Emitter<SignInState> emit) {
+    final mail = Email.dirty(event.email.trim());
 
     emit(
       state.copyWith(
           newIsValid: Formz.validate([mail, state.password]),
           newEmail: mail,
-          newPassword: PasswordValidator.dirty(state.password.value),
           newStatus: FormzSubmissionStatus.initial),
     );
-
   }
 
-  FutureOr<void> _signInPasswordChangedEvent(SignInPasswordChangedEvent event, Emitter<SignInState> emit) {
-
+  FutureOr<void> _signInPasswordChangedEvent(
+      SignInPasswordChangedEvent event, Emitter<SignInState> emit) {
     final pass = PasswordValidator.dirty(event.password);
 
     emit(
       state.copyWith(
           newIsValid: Formz.validate([state.email, pass]),
-          newEmail: Email.dirty(state.email.value),
           newPassword: pass,
           newStatus: FormzSubmissionStatus.initial),
     );
   }
 
-  FutureOr<void> _submitEvent(SubmitEvent event, Emitter<SignInState> emit) async{
-
+  FutureOr<void> _submitEvent(
+      SubmitEvent event, Emitter<SignInState> emit) async {
     if (state.isValid) {
       emit(state.copyWith(newStatus: FormzSubmissionStatus.inProgress));
 
       try {
         bool success = await Authentication.userLogin(
-            email: state.email.value,
-            password: state.password.value);
+            email: state.email.value, password: state.password.value);
         if (success) {
           emit(state.copyWith(
             newStatus: FormzSubmissionStatus.success,
@@ -69,6 +65,5 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
         emit(state.copyWith(newStatus: FormzSubmissionStatus.failure));
       }
     }
-    
   }
 }

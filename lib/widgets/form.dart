@@ -16,6 +16,8 @@ class InputForm extends StatelessWidget {
     this.width,
     this.height,
     this.maxLine,
+    this.errorText,
+    this.validator,
   });
 
   final String? title;
@@ -27,7 +29,9 @@ class InputForm extends StatelessWidget {
   final double? width;
   final double? height;
   final int? maxLine;
+  final String? errorText;
   final Function(String value)? onChanged;
+  final String? Function(String?)? validator;
 
   @override
   Widget build(BuildContext context) {
@@ -43,45 +47,53 @@ class InputForm extends StatelessWidget {
           ),
         ),
         Gap(8.h),
-        Form(
-          child: Container(
-            height: height ?? 40.h,
-            width: width,
-            // padding: EdgeInsets.only(bottom: 8.h),
-            decoration: ShapeDecoration(
-              shape: RoundedRectangleBorder(
-                side: const BorderSide(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              color: title != null ? null : Colors.white,
+        Container(
+          height: height ?? 40.h,
+          width: width,
+          decoration: ShapeDecoration(
+            shape: RoundedRectangleBorder(
+              side: const BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(8.r),
             ),
-            child: TextField(
-              controller: controller,
-              onChanged: onChanged,
-              keyboardType: type,
-              obscureText: obscure ?? false,
-              maxLines: maxLine ?? 1,
-              style: GoogleFonts.montserrat(
-                color: Colors.black,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
+            color: title != null ? null : Colors.white,
+          ),
+          child: TextFormField(
+            controller: controller,
+            onChanged: onChanged,
+            keyboardType: type,
+            obscureText: obscure ?? false,
+            maxLines: maxLine ?? 1,
+            style: GoogleFonts.montserrat(
+              color: Colors.black,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+            ),
+            textCapitalization: TextCapitalization.words,
+            decoration: InputDecoration(
+              enabled: enable ?? true,
+              hintText: hint,
+              hintStyle: GoogleFonts.montserrat(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w400,
+                color: Colors.black87,
               ),
-              textCapitalization: TextCapitalization.words,
-              decoration: InputDecoration(
-                enabled: enable ?? true,
-                hintText: hint,
-                hintStyle: GoogleFonts.montserrat(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black87,
-                ),
-                contentPadding:
-                    EdgeInsets.only(left: 15.w, bottom: 11..w, top: 2.h),
-                border: InputBorder.none,
-                focusedBorder: InputBorder.none,
-              ),
+              contentPadding:
+                  EdgeInsets.only(left: 15.w, bottom: 11..w, top: 2.h),
+              border: InputBorder.none,
+              focusedBorder: InputBorder.none,
             ),
           ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 10.w, top: 2.h),
+          child: errorText != null
+              ? Text(
+                  "$errorText",
+                  style: const TextStyle(
+                    color: Colors.redAccent,
+                  ),
+                )
+              : Container(),
         ),
       ],
     );

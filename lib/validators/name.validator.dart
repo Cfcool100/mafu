@@ -15,15 +15,17 @@ class Name extends FormzInput<String, NameError> {
     if (value.isNotEmpty == false) {
       return NameError.empty;
     }
-    return _nameRegExp.hasMatch(value) ? null : NameError.invalid;
+    return _nameRegExp.hasMatch(value) ? null : NameError.empty;
   }
 }
 
 extension ExplanationName on NameError {
-  String get number {
+  String get name {
     switch (this) {
       case NameError.invalid:
         return "This is not a valid name";
+      case NameError.empty:
+        return "Name cannot be empty";
       default:
         return '';
     }

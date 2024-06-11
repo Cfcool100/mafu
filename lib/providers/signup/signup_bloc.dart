@@ -37,19 +37,14 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
   }
   FutureOr<void> _signupFirstNameChangedEvent(
       SignupFirstNameChangedEvent event, Emitter<SignupState> emit) {
-    final firstname = Name.dirty(
-        event.firstname[0].toUpperCase() + event.firstname.substring(1).trim());
+    final firstname = Name.dirty(event.firstname.isNotEmpty
+        ? event.firstname[0].toUpperCase() + event.firstname.substring(1).trim()
+        : event.firstname);
 
     debugPrint('signup firstname: $firstname');
 
     emit(state.copyWith(
         newFirstname: firstname,
-        newLastname: Name.dirty(state.lastname.value),
-        newEmail: Email.dirty(state.email.value),
-        newPhoneNumber: PhoneNumber.dirty(state.phoneNumber.value),
-        newPassword: PasswordValidator.dirty(state.password.value),
-        newConfirmPassword:
-            PasswordValidator.dirty(state.confirmPassword.value),
         newIsValid: Formz.validate([
           firstname,
           state.lastname,
@@ -63,19 +58,14 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
 
   FutureOr<void> _signupLastNameChangedEvent(
       SignupLastNameChangedEvent event, Emitter<SignupState> emit) {
-    final lastname = Name.dirty(
-        event.lastname[0].toUpperCase() + event.lastname.substring(1).trim());
+    final lastname = Name.dirty(event.lastname.isNotEmpty
+        ? event.lastname[0].toUpperCase() + event.lastname.substring(1).trim()
+        : event.lastname);
 
     debugPrint('signup lastname: $lastname');
 
     emit(state.copyWith(
-        newFirstname: Name.dirty(state.firstname.value),
         newLastname: lastname,
-        newEmail: Email.dirty(state.email.value),
-        newPhoneNumber: PhoneNumber.dirty(state.phoneNumber.value),
-        newPassword: PasswordValidator.dirty(state.password.value),
-        newConfirmPassword:
-            PasswordValidator.dirty(state.confirmPassword.value),
         newIsValid: Formz.validate([
           state.firstname,
           lastname,
@@ -94,13 +84,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
     debugPrint('signup mail: $mail');
 
     emit(state.copyWith(
-        newFirstname: Name.dirty(state.firstname.value),
-        newLastname: Name.dirty(state.lastname.value),
         newEmail: mail,
-        newPhoneNumber: PhoneNumber.dirty(state.phoneNumber.value),
-        newPassword: PasswordValidator.dirty(state.password.value),
-        newConfirmPassword:
-            PasswordValidator.dirty(state.confirmPassword.value),
         newIsValid: Formz.validate([
           state.firstname,
           state.lastname,
@@ -127,13 +111,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
           state.password,
           state.confirmPassword
         ]),
-        newFirstname: Name.dirty(state.firstname.value),
-        newLastname: Name.dirty(state.lastname.value),
         newPhoneNumber: phone,
-        newEmail: Email.dirty(state.email.value),
-        newPassword: PasswordValidator.dirty(state.password.value),
-        newConfirmPassword:
-            PasswordValidator.dirty(state.confirmPassword.value),
         newStatus: FormzSubmissionStatus.initial));
   }
 
@@ -152,13 +130,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
           pass,
           state.confirmPassword
         ]),
-        newFirstname: Name.dirty(state.firstname.value),
-        newLastname: Name.dirty(state.lastname.value),
-        newEmail: Email.dirty(state.email.value),
-        newPhoneNumber: PhoneNumber.dirty(state.phoneNumber.value),
         newPassword: pass,
-        newConfirmPassword:
-            PasswordValidator.dirty(state.confirmPassword.value),
         newStatus: FormzSubmissionStatus.initial,
       ),
     );
@@ -180,11 +152,6 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
           state.password,
           confirmPass
         ]),
-        newFirstname: Name.dirty(state.firstname.value),
-        newLastname: Name.dirty(state.lastname.value),
-        newEmail: Email.dirty(state.email.value),
-        newPhoneNumber: PhoneNumber.dirty(state.phoneNumber.value),
-        newPassword: PasswordValidator.dirty(state.password.value),
         newConfirmPassword: confirmPass,
         newStatus: FormzSubmissionStatus.initial,
       ),

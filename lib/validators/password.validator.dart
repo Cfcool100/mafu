@@ -1,16 +1,13 @@
 import 'package:formz/formz.dart';
 
-enum PasswordError {
-  empty,
-  invalid
-}
+enum PasswordError { empty, invalid }
 
 class PasswordValidator extends FormzInput<String, PasswordError> {
   const PasswordValidator.pure([super.value = '']) : super.pure();
   const PasswordValidator.dirty([super.value = '']) : super.dirty();
 
   static final RegExp _passwordRegExp = RegExp(
-    r'^[0-9]\d{5}$',
+    r'^\d{6,}$',
   );
 
   @override
@@ -18,15 +15,13 @@ class PasswordValidator extends FormzInput<String, PasswordError> {
     if (value.isNotEmpty == false) {
       return PasswordError.empty;
     }
-    return _passwordRegExp.hasMatch(value)
-        ? null
-        : PasswordError.invalid;
+    return _passwordRegExp.hasMatch(value) ? null : PasswordError.invalid;
   }
 }
 
 extension ExplanationPassword on PasswordError {
-  String get number {
-    switch(this) {
+  String get name {
+    switch (this) {
       case PasswordError.invalid:
         return "This is not a valid password";
       default:

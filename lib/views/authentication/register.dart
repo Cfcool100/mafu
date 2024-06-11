@@ -70,77 +70,124 @@ class _RegisterPageState extends State<RegisterPage> {
                         Gap(25.h),
                         const SectionTitle(title: 'Inscription'),
                         Gap(8.h),
-                        InputForm(
-                          title: 'Email',
-                          hint: 'Entrer votre email',
-                          type: TextInputType.emailAddress,
-                          onChanged: (value) {
-                            context
-                                .read<SignupBloc>()
-                                .add(SignupEmailChangedEvent(value));
-                          },
-                        ),
-                        Gap(13.h),
-                        Row(
-                          children: [
-                            InputForm(
-                              title: 'Nom ',
-                              hint: 'Entrer votre nom ',
-                              type: TextInputType.text,
-                              width: 130.w,
-                              onChanged: (value) {
-                                context
-                                    .read<SignupBloc>()
-                                    .add(SignupLastNameChangedEvent(value));
-                              },
-                            ),
-                            const Spacer(),
-                            InputForm(
-                              title: 'Prénoms ',
-                              hint: 'Entrer vos Prénoms ',
-                              type: TextInputType.text,
-                              width: 170.w,
-                              onChanged: (value) {
-                                context
-                                    .read<SignupBloc>()
-                                    .add(SignupFirstNameChangedEvent(value));
-                              },
-                            ),
-                          ],
-                        ),
-                        Gap(13.h),
-                        InputForm(
-                          title: 'Numéro de téléphone ',
-                          hint: 'Entrer votre numéro de téléphone ',
-                          type: TextInputType.phone,
-                          onChanged: (value) {
-                            context
-                                .read<SignupBloc>()
-                                .add(SignupPhoneNumberChangedEvent(value));
-                          },
-                        ),
-                        Gap(13.h),
-                        InputForm(
-                          title: 'Mot de passe',
-                          hint: 'Entrer votre mot de passe',
-                          type: TextInputType.number,
-                          obscure: true,
-                          onChanged: (value) {
-                            context
-                                .read<SignupBloc>()
-                                .add(SignupPasswordChangedEvent(value));
-                          },
-                        ),
-                        Gap(13.h),
-                        InputForm(
-                          title: 'Confirmation',
-                          hint: 'Confirmer le mot de passe',
-                          type: TextInputType.number,
-                          obscure: true,
-                          onChanged: (value) {
-                            context
-                                .read<SignupBloc>()
-                                .add(SignupConfirmPasswordChangedEvent(value));
+                        BlocBuilder<SignupBloc, SignupState>(
+                          builder: (context, state) {
+                            return Form(
+                              child: Column(
+                                children: [
+                                  InputForm(
+                                    title: 'Email',
+                                    hint: 'Entrer votre email',
+                                    type: TextInputType.emailAddress,
+                                    errorText: state.email.isNotValid &&
+                                            state.email.displayError?.name !=
+                                                null
+                                        ? "* ${state.email.displayError?.name}: entrer un email valide"
+                                        : null,
+                                    onChanged: (value) {
+                                      context
+                                          .read<SignupBloc>()
+                                          .add(SignupEmailChangedEvent(value));
+                                    },
+                                  ),
+                                  Gap(13.h),
+                                  Row(
+                                    children: [
+                                      InputForm(
+                                        title: 'Nom ',
+                                        hint: 'Entrer votre nom ',
+                                        type: TextInputType.text,
+                                        width: 130.w,
+                                        errorText: state.lastname.isNotValid &&
+                                                state.lastname.displayError
+                                                        ?.name !=
+                                                    null
+                                            ? "* Nom est requis"
+                                            : null,
+                                        onChanged: (value) {
+                                          context.read<SignupBloc>().add(
+                                              SignupLastNameChangedEvent(
+                                                  value));
+                                        },
+                                      ),
+                                      const Spacer(),
+                                      InputForm(
+                                        title: 'Prénoms ',
+                                        hint: 'Entrer vos Prénoms ',
+                                        type: TextInputType.text,
+                                        width: 170.w,
+                                        errorText: state.firstname.isNotValid &&
+                                                state.firstname.displayError
+                                                        ?.name !=
+                                                    null
+                                            ? "* prénom est requis"
+                                            : null,
+                                        onChanged: (value) {
+                                          context.read<SignupBloc>().add(
+                                              SignupFirstNameChangedEvent(
+                                                  value));
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  Gap(13.h),
+                                  InputForm(
+                                    title: 'Numéro de téléphone ',
+                                    hint: 'Entrer votre numéro de téléphone ',
+                                    type: TextInputType.phone,
+                                    errorText: state.phoneNumber.isNotValid &&
+                                            state.phoneNumber.displayError
+                                                    ?.name !=
+                                                null
+                                        ? "${state.phoneNumber.displayError?.name}: entrer un numéro ivoirien"
+                                        : null,
+                                    onChanged: (value) {
+                                      context.read<SignupBloc>().add(
+                                          SignupPhoneNumberChangedEvent(value));
+                                    },
+                                  ),
+                                  Gap(13.h),
+                                  InputForm(
+                                    title: 'Mot de passe',
+                                    hint: 'Entrer votre mot de passe',
+                                    type: TextInputType.number,
+                                    obscure: true,
+                                    errorText: state.password.isNotValid &&
+                                            state.password.displayError?.name !=
+                                                null
+                                        ? "* entrer un minimum de 6 chiffres"
+                                        : null,
+                                    onChanged: (value) {
+                                      context.read<SignupBloc>().add(
+                                          SignupPasswordChangedEvent(value));
+                                    },
+                                  ),
+                                  Gap(13.h),
+                                  InputForm(
+                                    title: 'Confirmation',
+                                    hint: 'Confirmer le mot de passe',
+                                    type: TextInputType.number,
+                                    obscure: true,
+                                    errorText: state.password.value ==
+                                            state.confirmPassword.value
+                                        ? null
+                                        : state.confirmPassword.isNotValid &&
+                                                state.confirmPassword
+                                                        .displayError?.name !=
+                                                    null
+                                            ? "* Confirmation de mot de passe requis"
+                                            : "* Les mots de passe doivent être identiques",
+                                    onChanged: (value) {
+                                      print(
+                                          "is same ${state.confirmPassword == state.password}");
+                                      context.read<SignupBloc>().add(
+                                          SignupConfirmPasswordChangedEvent(
+                                              value));
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
                           },
                         ),
                         Gap(35.h),

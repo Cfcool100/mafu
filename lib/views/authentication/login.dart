@@ -19,6 +19,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -56,26 +58,47 @@ class _LoginPageState extends State<LoginPage> {
                       const Gap(50),
                       const SectionTitle(title: 'Connexion'),
                       const Gap(10),
-                      InputForm(
-                        title: 'Email',
-                        hint: 'Entrer votre email',
-                        type: TextInputType.emailAddress,
-                        onChanged: (value) {
-                          context
-                              .read<SignInBloc>()
-                              .add(SignInEmailChangedEvent(value));
-                        },
-                      ),
-                      const Gap(20),
-                      InputForm(
-                        title: 'Mot de passe',
-                        hint: 'Entrer votre mot de passe',
-                        type: TextInputType.number,
-                        obscure: true,
-                        onChanged: (value) {
-                          context
-                              .read<SignInBloc>()
-                              .add(SignInPasswordChangedEvent(value));
+                      BlocBuilder<SignInBloc, SignInState>(
+                        builder: (context, state) {
+                          return Form(
+                            key: _formKey,
+                            // autovalidateMode: AutovalidateMode.disabled,
+                            child: Column(
+                              children: [
+                                InputForm(
+                                  title: 'Email',
+                                  hint: 'Entrer votre email',
+                                  type: TextInputType.emailAddress,
+                                  errorText: state.email.isNotValid &&
+                                          state.email.displayError?.name != null
+                                      ? "${state.email.displayError?.name}: entrer un email valide"
+                                      : null,
+                                  onChanged: (value) {
+                                    context
+                                        .read<SignInBloc>()
+                                        .add(SignInEmailChangedEvent(value));
+                                  },
+                                ),
+                                const Gap(20),
+                                InputForm(
+                                  title: 'Mot de passe',
+                                  hint: 'Entrer votre mot de passe',
+                                  type: TextInputType.number,
+                                  obscure: true,
+                                  errorText: state.password.isNotValid &&
+                                          state.password.displayError?.name !=
+                                              null
+                                      ? "${state.password.displayError?.name}: entrer un minimum de 6 chiffres"
+                                      : null,
+                                  onChanged: (value) {
+                                    context
+                                        .read<SignInBloc>()
+                                        .add(SignInPasswordChangedEvent(value));
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
                         },
                       ),
                       const Gap(50),
@@ -90,6 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                               }
                             : null,
                         title: 'Connexion',
+                        status: state.status,
                         color: const Color(0XFF111D4A),
                         textColor: Colors.white,
                         width: .9.sw,

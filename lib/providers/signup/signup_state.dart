@@ -47,7 +47,7 @@ class SignupState extends Equatable {
       email: newEmail ?? email,
       phoneNumber: newPhoneNumber ?? phoneNumber,
       password: newPassword ?? password,
-      confirmPassword: newPassword ?? password,
+      confirmPassword: newConfirmPassword ?? confirmPassword,
       isValid: newIsValid ?? isValid,
       status: newStatus ?? status,
     );
