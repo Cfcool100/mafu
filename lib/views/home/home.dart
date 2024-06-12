@@ -143,7 +143,7 @@ class _HomeState extends State<Home> {
               child: SizedBox(
                 height: 374.h,
                 child: FutureBuilder<List<FloodAlert>>(
-                  future: getFloodAlerts(),
+                  future: Alert.fetchAlert(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const CircularProgressIndicator();
