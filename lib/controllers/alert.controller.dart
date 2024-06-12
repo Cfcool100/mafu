@@ -59,7 +59,7 @@ class Alert extends ChangeNotifier {
     }
   }
 
-  static Future<void> fetchAlert() async {
+  static Future<List<FloodAlert>> fetchAlert() async {
     final SharedPreferences pref = await SharedPreferences.getInstance();
 
     try {
@@ -70,7 +70,8 @@ class Alert extends ChangeNotifier {
             'Accept': 'application/json',
           });
 
-      // debugPrint('Response body: ${response.body}');
+      debugPrint(
+          '>>>>>>>>>>>>>>>>>>\n*********************\nResponse body: ${response.body}');
 
       final List<dynamic> dataList = jsonDecode(response.body);
 
@@ -90,9 +91,12 @@ class Alert extends ChangeNotifier {
         // print('Stored Flood Alerts: $alertList');
         debugPrint(
             '>>>>>>>>>>>>>>>>>>\n*********************\n$alertList\n>>>>>>>>>>>>>>>>>>\n*********************');
+        return alertList;
       }
+      return [];
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("***************************************${e.toString()}");
+      return [];
     }
   }
 }
