@@ -200,6 +200,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       context
                                           .read<SignupBloc>()
                                           .add(SignupSubmitEvent());
+                                      FocusScope.of(context).unfocus();
                                       debugPrint(
                                           '::::::::::::::::::*${state.isValid}::::::::::*${state.status}');
                                     }

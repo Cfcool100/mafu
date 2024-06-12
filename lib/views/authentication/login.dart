@@ -110,6 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: state.isValid
                             ? () async {
                                 context.read<SignInBloc>().add(SubmitEvent());
+                                FocusScope.of(context).unfocus();
                               }
                             : null,
                         title: 'Connexion',
