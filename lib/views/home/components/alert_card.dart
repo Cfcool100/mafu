@@ -1,17 +1,23 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mafuriko/utils/elapsed_times.dart';
 import 'package:mafuriko/utils/themes.dart';
 
 class AlertInfosCard extends StatelessWidget {
-  const AlertInfosCard({super.key, this.spaceBetween, this.scene, this.intensity, this.postDate, this.style});
+  const AlertInfosCard(
+      {super.key,
+      this.spaceBetween,
+      this.scene,
+      this.intensity,
+      this.postDate,
+      this.style});
 
   final double? spaceBetween;
   final String? scene;
   final String? intensity;
-  final DateTime? postDate;
+  final String? postDate;
   final TextStyle? style;
 
   @override
@@ -71,7 +77,7 @@ class AlertInfosCard extends StatelessWidget {
                       style: style ?? GoogleFonts.montserrat(fontSize: 14.sp),
                     ),
                     Text(
-                      '$postDate',
+                      formatElapsedTime(postDate ?? ''),
                       style: GoogleFonts.montserrat(fontSize: 14.sp),
                     ),
                   ],

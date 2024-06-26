@@ -12,7 +12,6 @@ import 'package:mafuriko/views/profile/profile.view.dart';
 import 'package:mafuriko/views/profile/security.dart';
 import 'package:mafuriko/views/profile/user.dart';
 
-
 final GoRouter router = GoRouter(routes: [
   GoRoute(
     path: Paths.baseRoute,

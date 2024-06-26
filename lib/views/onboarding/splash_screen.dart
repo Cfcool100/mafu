@@ -5,7 +5,6 @@ import 'package:lottie/lottie.dart';
 import 'package:mafuriko/providers/user.providers.dart';
 import 'package:mafuriko/routes/constants.dart';
 
-
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -14,7 +13,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   final AuthenticationBloc authBloc = AuthenticationBloc();
 
   @override
@@ -31,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
           context.pushNamed(Paths.home);
         } else {
           debugPrint('empty');
-          context.pushNamed(Paths.onboarding);
+          context.pushNamed(Paths.home);
         }
       });
     });

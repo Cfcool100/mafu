@@ -1,16 +1,18 @@
-import 'dart:convert';
+// import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:mafuriko/controllers/alert.controller.dart';
 import 'package:mafuriko/models/alert.models.dart';
+import 'package:mafuriko/utils/themes.dart';
 import 'package:mafuriko/views/home/components/home_component.dart';
 import 'package:mafuriko/widgets/section_title.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -20,11 +22,18 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  late Future<List<FloodAlert>> _futureAlerts;
   @override
   void initState() {
     super.initState();
-    Alert.fetchAlert();
+    _futureAlerts = Alert.fetchAlert();
     getLocate();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
   }
 
   double lat = 0;
@@ -69,18 +78,18 @@ class _HomeState extends State<Home> {
 
   final ScrollController _controller = ScrollController();
 
-  Future<List<FloodAlert>> getFloodAlerts() async {
-    final SharedPreferences pref = await SharedPreferences.getInstance();
-    final String? jsonString = pref.getString('FloodAlert');
-    if (jsonString != null) {
-      final List<dynamic> jsonList = jsonDecode(jsonString);
-      List<FloodAlert> alerts =
-          jsonList.map((json) => FloodAlert.fromJson(json)).toList();
-      return alerts;
-    } else {
-      return [];
-    }
-  }
+  // Future<List<FloodAlert>> getFloodAlerts() async {
+  //   final SharedPreferences pref = await SharedPreferences.getInstance();
+  //   final String? jsonString = pref.getString('FloodAlert');
+  //   if (jsonString != null) {
+  //     final List<dynamic> jsonList = jsonDecode(jsonString);
+  //     List<FloodAlert> alerts =
+  //         jsonList.map((json) => FloodAlert.fromJson(json)).toList();
+  //     return alerts;
+  //   } else {
+  //     return [];
+  //   }
+  // }
 
   DateTime formatStringToDateTime(String date) {
     return DateFormat('dd/MM/yyyy').parse(date);
@@ -143,14 +152,23 @@ class _HomeState extends State<Home> {
               child: SizedBox(
                 height: 374.h,
                 child: FutureBuilder<List<FloodAlert>>(
-                  future: Alert.fetchAlert(),
+                  future: _futureAlerts,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
+                      return SpinKitRing(
+                        color: Colors.blueAccent.shade100,
+                        size: 50.h,
+                        lineWidth: 3.5.w,
+                      );
                     } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Text('No Flood Alerts available');
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData && snapshot.data!.isEmpty) {
+                      return Center(
+                        child: Text(
+                          'No Flood Alerts available',
+                          style: AppTheme.textSemiRegularH5,
+                        ),
+                      );
                     } else {
                       List<FloodAlert> floodAlerts = snapshot.data!;
                       return ListView.builder(
@@ -163,6 +181,7 @@ class _HomeState extends State<Home> {
                             spaceBetween: index % 2 == 1 ? 15.w : 5.w,
                             scene: floodAlerts[last].floodLocation['latitude'],
                             intensity: floodAlerts[last].floodIntensity,
+                            postDate: floodAlerts[index].floodDate,
                           );
                         },
                       );

@@ -28,7 +28,7 @@ class _MapPageState extends State<MapPage> {
 
   bool isLoad = false;
   bool showTheme = false;
-  double zoom = 15;
+  double zoom = 15.0;
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
@@ -306,8 +306,9 @@ class _MapPageState extends State<MapPage> {
                                 IconButton(
                                   padding: EdgeInsets.zero,
                                   onPressed: () {
-                                    setState(() {
-                                      zoom = zoom + 1;
+                                    _controller.future.then((controller) {
+                                      controller.animateCamera(
+                                          CameraUpdate.zoomBy(1.0));
                                     });
                                     debugPrint('add $zoom');
                                   },
@@ -321,12 +322,11 @@ class _MapPageState extends State<MapPage> {
                                 IconButton(
                                   padding: EdgeInsets.zero,
                                   onPressed: () {
-                                    debugPrint('minus');
-                                    setState(() {
-                                      zoom = zoom - 1;
+                                    debugPrint('minus $zoom');
+                                    _controller.future.then((controller) {
+                                      controller.animateCamera(
+                                          CameraUpdate.zoomBy(-1.0));
                                     });
-
-                                    debugPrint('add');
                                   },
                                   icon: const Icon(CupertinoIcons.minus),
                                 ),

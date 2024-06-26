@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:mafuriko/providers/alerts/alerts_bloc.dart';
 import 'package:mafuriko/providers/user.providers.dart';
 import 'package:mafuriko/routes/routes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-void main() {
+void main() async {
+  await initializeDateFormatting('fr', null);
   runApp(const MyApp());
 }
 
@@ -29,6 +32,9 @@ class MyApp extends StatelessWidget {
             ),
             BlocProvider(
               create: (context) => SignupBloc(),
+            ),
+            BlocProvider(
+              create: (context) => AlertsBloc(),
             ),
           ],
           child: MaterialApp.router(

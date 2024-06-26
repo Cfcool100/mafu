@@ -8,44 +8,57 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mafuriko/models/alert.models.dart';
+import 'package:mafuriko/utils/upload_to_digit_oc.dart';
 // import 'package:location/location.dart';
 // import 'package:mafuriko/utils/pop_up.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Alert extends ChangeNotifier {
-  static Future<void> sendAlert({
+  static Future<bool> sendAlert({
     required LatLng position,
+    required String location,
     required String description,
     required String intensity,
-    required XFile image,
+    XFile? image,
   }) async {
     final dio = Dio();
 
-    final FormData formData = FormData();
+    // final FormData formData = FormData();
 
     try {
-      formData.files.addAll([
-        MapEntry("files", await MultipartFile.fromFile(File(image.path).path)),
-      ]);
+      // formData.files.addAll([
+      //   MapEntry(
+      //       "files",
+      //       await MultipartFile.fromFile(File(
+      //               '/data/user/0/com.geodaftar.mafuriko/cache/86fc05f6-5f1a-42af-8e26-1213275e7443/1000000042.jpg')
+      //           .path)),
+      // ]);
 
-      formData.fields.add(MapEntry('longitude', position.longitude.toString()));
-      formData.fields.add(MapEntry('latitude', position.latitude.toString()));
-      formData.fields.add(MapEntry('floodDescription', description));
-      formData.fields.add(MapEntry('floodIntensity', intensity));
+      // formData.fields.add(MapEntry('longitude', position.longitude.toString()));
+      // formData.fields.add(MapEntry('latitude', position.latitude.toString()));
+      // formData.fields.add(MapEntry('floodDescription', description));
+      // formData.fields.add(MapEntry('floodIntensity', intensity));
+      Uri? floodImageUri;
+      if (image != null) {
+        floodImageUri = await uploadFile(File(image.path), "alerts");
+        debugPrint('flood image take by user  $floodImageUri');
+      }
 
-      debugPrint('>>>>>>>>>>>>>>>>>>>>${formData.fields}>>>>>>>>>>>>>>>>>>>>');
+      final Map<String, dynamic> formData = {
+        'floodScene': location,
+        'longitude': '${position.longitude}',
+        'latitude': '${position.latitude}',
+        'floodDescription': description,
+        'floodIntensity': intensity,
+      };
+
+      if (floodImageUri != null) {
+        formData["proprietyImages"] = floodImageUri.toString();
+      }
+
+      debugPrint('>>>>>>>>>>>>>>>>>>>>${formData.entries}>>>>>>>>>>>>>>>>>>>>');
       debugPrint(
-          '========================${formData.files.first}========================');
-
-      // final formData = FormData.fromMap({
-      //   'longitude': '${position.longitude}',
-      //   'latitude': '${position.latitude}',
-      //   'floodDescription': description,
-      //   'floodIntensity': intensity,
-      //   // 'date': DateTime.now().toIso8601String(),
-      //   // 'floodImages': await MultipartFile.fromFile(image.path,
-      //   //     filename: 'image.jpg'),
-      // });
+          '========================${formData.values.first}========================');
 
       // formData.files.add(value)
       final response = await dio.post(
@@ -53,9 +66,17 @@ class Alert extends ChangeNotifier {
         data: formData,
       );
 
-      debugPrint('Response body: ${response.data}');
+      if (response.statusCode == 200) {
+        debugPrint('Response body: ${response.data}');
+        return true;
+      } else {
+        debugPrint('Response Failed body: ${response.data}');
+        return false;
+      }
     } catch (e) {
-      debugPrint('????????????$e ????????????????');
+      debugPrint(
+          '::::::::::::::::::::::::\n::::::::::::::::::$e ::::::::::::::::::::::::\n::::::::::::::::::');
+      return false;
     }
   }
 
@@ -64,38 +85,45 @@ class Alert extends ChangeNotifier {
 
     try {
       final response = await http.get(
-          Uri.parse('https://mafu-back.vercel.app/zonesInondees'),
-          headers: <String, String>{
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          });
+        Uri.parse('https://mafu-back.vercel.app/zonesInondees'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      );
 
-      debugPrint(
-          '>>>>>>>>>>>>>>>>>>\n*********************\nResponse body: ${response.body}');
-
-      final List<dynamic> dataList = jsonDecode(response.body);
+      debugPrint('Response status: ${response.statusCode}');
+      debugPrint('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        // Convertir la liste d'alertes d'inondation en une liste d'objets FloodAlert
-        List<FloodAlert> alertList =
-            dataList.map((item) => FloodAlert.fromJson(item)).toList();
+        final List<dynamic> dataList = jsonDecode(response.body);
 
-        // Convertir la liste d'objets FloodAlert en une liste d'objets JSON
-        List<Map<String, dynamic>> jsonList =
-            alertList.map((alert) => alert.toJson()).toList();
+        // Vérifiez si dataList est une liste et contient des éléments
+        if (dataList.isNotEmpty) {
+          // Convertir la liste d'alertes d'inondation en une liste d'objets FloodAlert
+          List<FloodAlert> alertList =
+              dataList.map((item) => FloodAlert.fromJson(item)).toList();
 
-        // Enregistrer la liste d'objets JSON dans SharedPreferences
-        pref.setString('FloodAlert', jsonEncode(jsonList));
+          // Convertir la liste d'objets FloodAlert en une liste d'objets JSON
+          List<Map<String, dynamic>> jsonList =
+              alertList.map((alert) => alert.toJson()).toList();
 
-        // Afficher les données pour vérification
-        // print('Stored Flood Alerts: $alertList');
+          // Enregistrer la liste d'objets JSON dans SharedPreferences
+          await pref.setString('FloodAlert', jsonEncode(jsonList));
+
+          debugPrint('Stored Flood Alerts: $alertList');
+          return alertList;
+        } else {
+          debugPrint('Data list is empty or not a list');
+          return [];
+        }
+      } else {
         debugPrint(
-            '>>>>>>>>>>>>>>>>>>\n*********************\n$alertList\n>>>>>>>>>>>>>>>>>>\n*********************');
-        return alertList;
+            'Failed to load alerts. Status code: ${response.statusCode}');
+        return [];
       }
-      return [];
     } catch (e) {
-      debugPrint("***************************************${e.toString()}");
+      debugPrint('Error fetching alerts: ${e.toString()}');
       return [];
     }
   }

@@ -90,7 +90,7 @@ class Authentication extends ChangeNotifier {
 
         pref.setString('userData', jsonEncode(userData));
 
-        debugPrint( 'data cached : \n${pref.getString('userData')}');
+        debugPrint('data cached : \n${pref.getString('userData')}');
 
         return true;
       } else {
@@ -101,4 +101,80 @@ class Authentication extends ChangeNotifier {
       return false;
     }
   }
+
+  static Future<bool> updateUserPassword({
+    required String currentPassword,
+    required String newPassword,
+    required String passwordConfirmation,
+  }) async {
+    final body = {
+      "userPassword": "12345",
+      "usernewPassword": "13579",
+      "usernewPasswordC": "13579"
+    };
+
+    final headers = <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'token'
+    };
+    try {
+      final response = await http.put(
+        Uri.parse('https://mafu-back.vercel.app/users/signup'),
+        headers: headers,
+        body: json.encode(body),
+      );
+      if (response.statusCode == 200) true;
+      return false;
+    } catch (e) {
+      debugPrint('####################### $e');
+      return false;
+    }
+  }
+
+  static Future<bool> updateUser(
+      {required String lastName,
+      required String firstName,
+      required String phoneNumber}) async {
+    final body = {
+      "image":
+          "https://www.figma.com/design/YhOJi4lKOkFNkbAwamSjHY/Mafuriko-Design?node-id=70-4065",
+      "userFirstName": firstName
+    };
+
+    final headers = <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'token'
+    };
+    try {
+      final response = await http.put(
+        Uri.parse('https://mafu-back.vercel.app/users/signup'),
+        headers: headers,
+        body: json.encode(body),
+      );
+      if (response.statusCode == 200) true;
+      return false;
+    } catch (e) {
+      debugPrint('####################### $e');
+      return false;
+    }
+  }
+
+//  ===> update user
+
+// Header = {“Authorization” : “Token”}
+
+// Body = {
+  // "image" : "https://www.figma.com/design/YhOJi4lKOkFNkbAwamSjHY/Mafuriko-Design?node-id=70-4065",
+  // "userFirstName": "Kone"
+// }
+
+//  ===> update user password
+
+// Header = {“Authorization” : “Token”}
+
+// Body = {
+  // "userPassword": "12345",
+  // "usernewPassword": "13579",
+  // "usernewPasswordC": "13579"
+// }
 }

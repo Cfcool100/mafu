@@ -5,10 +5,12 @@ import 'package:flutter_remix/flutter_remix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+
 import 'package:mafuriko/providers/authentication/authentication_bloc.dart';
 import 'package:mafuriko/routes/constants.dart';
 import 'package:mafuriko/utils/pop_up.dart';
 import 'package:mafuriko/utils/themes.dart';
+import 'package:mafuriko/views/profile/edit.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -22,6 +24,12 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(30.h),
+        child: AppBar(
+          backgroundColor: CupertinoColors.white,
+        ),
+      ),
       backgroundColor: CupertinoColors.white,
       body: SafeArea(
         bottom: false,
@@ -34,30 +42,20 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 SizedBox(height: .12.sh),
                 Positioned(
-                  bottom: -10.h,
-                  child: CircleAvatar(
-                    radius: 35.r,
-                    backgroundColor: AppTheme.secondaryColor,
-                    child: Container(
-                      decoration: const ShapeDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('images/profile.png'),
-                          fit: BoxFit.contain,
-                        ),
-                        shape: CircleBorder(),
-                      ),
-                    ),
+                  bottom: 10.h,
+                  child: const AvatarProfile(
+                    isModifiable: false,
                   ),
                 ),
               ],
             ),
-            Gap(18.h),
+            // Gap(2.h),
             BlocBuilder<AuthenticationBloc, AuthenticationState>(
               builder: (context, state) {
                 return Column(
                   children: [
                     Text(
-                      '${state.user?.lastName} ${state.user?.firstName}',
+                      '${state.user?.lastName ?? 'User'} ${state.user?.firstName}',
                       style: AppTheme.regularTextH1,
                     ),
                     Gap(10.h),
