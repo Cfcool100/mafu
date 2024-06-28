@@ -157,6 +157,8 @@ class _HomeState extends State<Home> {
                       );
                     } else {
                       List<FloodAlert> floodAlerts = snapshot.data!;
+                      floodAlerts
+                          .sort((a, b) => b.floodDate.compareTo(a.floodDate));
                       return ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: floodAlerts.length,
