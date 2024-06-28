@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:mafuriko/providers/authentication/authentication_bloc.dart';
+import 'package:mafuriko/providers/profile/profile_bloc.dart';
 import 'package:mafuriko/routes/constants.dart';
 import 'package:mafuriko/utils/pop_up.dart';
 import 'package:mafuriko/utils/themes.dart';
@@ -50,7 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ],
             ),
             // Gap(2.h),
-            BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            BlocBuilder<ProfileBloc, ProfileState>(
               builder: (context, state) {
                 return Column(
                   children: [
@@ -172,6 +172,7 @@ class AppFeatures extends StatelessWidget {
           ListTile(
             onTap: () {
               context.pushNamed(Paths.userProfile);
+              context.read<ProfileBloc>().add(const ProfileUpdateEvent());
             },
             title: Text(
               'Informations utilisateur',
@@ -183,6 +184,7 @@ class AppFeatures extends StatelessWidget {
           ListTile(
             onTap: () {
               context.pushNamed(Paths.security);
+              context.read<ProfileBloc>().add(const ProfileUpdateEvent());
             },
             title: Text(
               'Modifier le mot de passe',

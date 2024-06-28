@@ -1,13 +1,11 @@
-
-
 class UserModel {
   final String? id;
   final String? firstName;
   final String? lastName;
-  final String userNumber;
+  final String? userNumber;
   final String userEmail;
   final String? userPassword;
-  final String? parentalCode;
+  final String? profileImage;
 
   UserModel({
     this.id,
@@ -16,7 +14,7 @@ class UserModel {
     required this.userEmail,
     required this.userNumber,
     this.userPassword,
-    this.parentalCode,
+    this.profileImage,
   });
 
   Map<String, dynamic> toJson() {
@@ -25,8 +23,8 @@ class UserModel {
       'userLastName': lastName,
       'userEmail': userEmail,
       'userNumber': userNumber,
-      'codeSecurite': userPassword,
-      'codeParental': parentalCode
+      'userPassword': userPassword,
+      'image': profileImage
     };
   }
 
@@ -37,8 +35,8 @@ class UserModel {
       lastName: json['userLastName'],
       userEmail: json['userEmail'],
       userNumber: json['userNumber'],
-      userPassword: json['codeSecurite'],
-      parentalCode: json['codeParental'],
+      userPassword: json['userPassword'],
+      profileImage: json['image'],
     );
   }
 }

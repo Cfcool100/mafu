@@ -1,10 +1,9 @@
 import 'package:equatable/equatable.dart';
 
-
-class FloodAlert extends Equatable{
+class FloodAlert extends Equatable {
   final Map<String, String> floodLocation;
   final String floodDate;
-  final String floodDescription;
+  final String? floodDescription;
   final String floodIntensity;
   // final List<String> floodImages;
 
@@ -20,7 +19,7 @@ class FloodAlert extends Equatable{
     return FloodAlert(
       floodLocation: Map<String, String>.from(json['floodLocation']),
       floodDate: json['floodDate'],
-      floodDescription: json['floodDescription'],
+      floodDescription: json['floodDescription'] ?? 'NaN',
       floodIntensity: json['floodIntensity'],
       // floodImages: json['floodImages'],
     );
@@ -47,5 +46,10 @@ class FloodAlert extends Equatable{
   //     );
 
   @override
-  List<Object?> get props => [floodLocation, floodDate, floodDescription, floodIntensity, ];
+  List<Object?> get props => [
+        floodLocation,
+        floodDate,
+        floodDescription,
+        floodIntensity,
+      ];
 }

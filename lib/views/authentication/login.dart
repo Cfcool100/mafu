@@ -4,8 +4,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:formz/formz.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mafuriko/providers/profile/profile_bloc.dart';
 import 'package:mafuriko/providers/user.providers.dart';
 import 'package:mafuriko/routes/constants.dart';
+import 'package:mafuriko/utils/toasts.dart';
 import 'package:mafuriko/widgets/button.dart';
 import 'package:mafuriko/widgets/form.dart';
 import 'package:mafuriko/widgets/link_text.dart';
@@ -26,16 +28,25 @@ class _LoginPageState extends State<LoginPage> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: BlocListener<SignInBloc, SignInState>(
+        listenWhen: (previous, current) =>
+            current.currentPassword != previous.currentPassword,
         listener: (context, state) {
           if (state.isValid && state.status.isSuccess) {
+            context.read<SignInBloc>().add(StopEvent());
             context.read<AuthenticationBloc>().add(AuthenticationStatusChanged(
                 AuthenticationStatus.authenticated));
+            context.read<ProfileBloc>().add(const ProfileUpdateEvent());
             context.pushNamed(Paths.home);
+          } else if (state.status.isCanceled) {
+            Toasts.failure(
+              context,
+              message: "Une erreur est survenue. Veuillez réessayer plus tard.",
+            );
           } else if (state.status.isFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: const Text("error"),
-              backgroundColor: Colors.red.shade200,
-            ));
+            Toasts.failure(
+              context,
+              message: "Email ou mot de passe incorrect.",
+            );
           }
         },
         child: Scaffold(
@@ -85,10 +96,8 @@ class _LoginPageState extends State<LoginPage> {
                                   hint: 'Entrer votre mot de passe',
                                   type: TextInputType.number,
                                   obscure: true,
-                                  errorText: state.password.isNotValid &&
-                                          state.password.displayError?.name !=
-                                              null
-                                      ? "${state.password.displayError?.name}: entrer un minimum de 6 chiffres"
+                                  errorText: state.password.isNotValid
+                                      ? "Entrer un minimum de 6 caractères"
                                       : null,
                                   onChanged: (value) {
                                     context
@@ -108,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                     builder: (context, state) {
                       return PrimaryButton(
                         onPressed: state.isValid
-                            ? () async {
+                            ? () {
                                 context.read<SignInBloc>().add(SubmitEvent());
                                 FocusScope.of(context).unfocus();
                               }

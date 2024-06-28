@@ -1,6 +1,9 @@
 part of 'alerts_bloc.dart';
 
-sealed class AlertsEvent extends Equatable {}
+sealed class AlertsEvent extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
 
 class FetchFloodAlerts extends AlertsEvent {
   @override
@@ -42,10 +45,7 @@ class AlertDescriptionChanged extends AlertsEvent {
 class AlertIntensityChanged extends AlertsEvent {
   final String value;
 
-  AlertIntensityChanged({this.value = ""});
-
-  @override
-  List<Object?> get props => [value];
+  AlertIntensityChanged({required this.value});
 }
 
 class PickAlertImage extends AlertsEvent {

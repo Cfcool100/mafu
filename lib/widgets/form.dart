@@ -4,21 +4,21 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:gap/gap.dart';
 
 class InputForm extends StatelessWidget {
-  const InputForm({
-    super.key,
-    this.title,
-    required this.type,
-    this.hint,
-    this.onChanged,
-    this.controller,
-    this.obscure,
-    this.enable,
-    this.width,
-    this.height,
-    this.maxLine,
-    this.errorText,
-    this.validator,
-  });
+  const InputForm(
+      {super.key,
+      this.title,
+      required this.type,
+      this.hint,
+      this.onChanged,
+      this.controller,
+      this.obscure,
+      this.enable,
+      this.width,
+      this.height,
+      this.maxLine,
+      this.errorText,
+      this.validator,
+      this.isLongText = false});
 
   final String? title;
   final TextEditingController? controller;
@@ -32,6 +32,7 @@ class InputForm extends StatelessWidget {
   final String? errorText;
   final Function(String value)? onChanged;
   final String? Function(String?)? validator;
+  final bool isLongText;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +69,9 @@ class InputForm extends StatelessWidget {
               fontSize: 14.sp,
               fontWeight: FontWeight.w500,
             ),
-            textCapitalization: TextCapitalization.words,
+            textCapitalization: isLongText
+                ? TextCapitalization.sentences
+                : TextCapitalization.words,
             decoration: InputDecoration(
               enabled: enable ?? true,
               hintText: hint,

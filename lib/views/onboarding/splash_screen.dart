@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
+import 'package:mafuriko/providers/profile/profile_bloc.dart';
 import 'package:mafuriko/providers/user.providers.dart';
 import 'package:mafuriko/routes/constants.dart';
 
@@ -14,6 +15,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   final AuthenticationBloc authBloc = AuthenticationBloc();
+  final ProfileBloc profileBloc = ProfileBloc();
 
   @override
   void initState() {
@@ -29,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
           context.pushNamed(Paths.home);
         } else {
           debugPrint('empty');
-          context.pushNamed(Paths.home);
+          context.pushNamed(Paths.onboarding);
         }
       });
     });

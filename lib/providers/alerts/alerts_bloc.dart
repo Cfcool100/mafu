@@ -62,6 +62,8 @@ class AlertsBloc extends Bloc<AlertsEvent, AlertsState> {
     debugPrint(
         ':::::::::::::::::::::::::::::::::::::: description typing.. : ${event.desc}');
     emit(state.copyWith(description: event.desc));
+    debugPrint(
+        ':::::::::::::::::::::::::::::::::::::: state description typing.. : ${state.description}');
   }
 
   FutureOr<void> _onIntensityChange(
@@ -69,10 +71,14 @@ class AlertsBloc extends Bloc<AlertsEvent, AlertsState> {
     debugPrint(
         ':::::::::::::::::::::::::::::::::::::: intensity value change.. : ${event.value}');
 
+    debugPrint(
+        ':::::::::::::::::::::::::::::::::::::: before intensity state value change.. : ${state.intensity}');
     emit(state.copyWith(
         intensity: event.value,
         isValid:
             event.value.isNotEmpty && state.position != const LatLng(0, 0)));
+    debugPrint(
+        ':::::::::::::::::::::::::::::::::::::: intensity state value change.. : ${state.intensity}');
   }
 
   Future<FutureOr<void>> _onPickAlertImage(
@@ -95,7 +101,7 @@ class AlertsBloc extends Bloc<AlertsEvent, AlertsState> {
           location: state.locationTyped,
           position: state.position,
           description: state.description,
-          intensity: state.intensity ?? '',
+          intensity: state.intensity,
           image: state.file,
         );
 
@@ -123,10 +129,15 @@ class AlertsBloc extends Bloc<AlertsEvent, AlertsState> {
       AlertLocationChanged event, Emitter<AlertsState> emit) {
     debugPrint(
         ':::::::::::::::::::::::::::::::::::::: location ... : ${event.position}');
+    debugPrint(
+        ':::::::::::::::::::::::::::::::::::::: intensity ... : ${state.intensity}');
     emit(state.copyWith(
         position: event.position,
-        isValid:
-            state.intensity != null && event.position != const LatLng(0, 0)));
+        intensity: state.intensity,
+        isValid: state.intensity.isNotEmpty &&
+            event.position != const LatLng(0, 0)));
+    debugPrint(
+        ':::::::::::::::::::::::::::::::::::::: intensity after location change ... : ${state.intensity}');
   }
 
   FutureOr<void> _onLocationTypedChange(

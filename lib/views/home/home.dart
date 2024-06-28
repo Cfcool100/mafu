@@ -1,14 +1,15 @@
 // import 'dart:convert';
 
 import 'package:flutter/material.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:mafuriko/controllers/alert.controller.dart';
 import 'package:mafuriko/models/alert.models.dart';
+
 import 'package:mafuriko/utils/themes.dart';
 import 'package:mafuriko/views/home/components/home_component.dart';
 import 'package:mafuriko/widgets/section_title.dart';
@@ -23,17 +24,19 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late Future<List<FloodAlert>> _futureAlerts;
+
   @override
   void initState() {
     super.initState();
+    // _profileBloc.add(const ProfileUpdateEvent());
     _futureAlerts = Alert.fetchAlert();
     getLocate();
   }
 
   @override
   void dispose() {
-    super.dispose();
     _controller.dispose();
+    super.dispose();
   }
 
   double lat = 0;
@@ -77,23 +80,6 @@ class _HomeState extends State<Home> {
   }
 
   final ScrollController _controller = ScrollController();
-
-  // Future<List<FloodAlert>> getFloodAlerts() async {
-  //   final SharedPreferences pref = await SharedPreferences.getInstance();
-  //   final String? jsonString = pref.getString('FloodAlert');
-  //   if (jsonString != null) {
-  //     final List<dynamic> jsonList = jsonDecode(jsonString);
-  //     List<FloodAlert> alerts =
-  //         jsonList.map((json) => FloodAlert.fromJson(json)).toList();
-  //     return alerts;
-  //   } else {
-  //     return [];
-  //   }
-  // }
-
-  DateTime formatStringToDateTime(String date) {
-    return DateFormat('dd/MM/yyyy').parse(date);
-  }
 
   TextStyle style(String intensity) {
     if (intensity == 'faible') {

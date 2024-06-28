@@ -39,6 +39,9 @@ class _DataFormState extends State<DataForm> {
     getLocate();
   }
 
+  final TextEditingController _floodScene = TextEditingController();
+  final TextEditingController _floodDesc = TextEditingController();
+
   Location location = Location();
   bool isLoad = false;
 
@@ -84,7 +87,6 @@ class _DataFormState extends State<DataForm> {
   @override
   void dispose() {
     super.dispose();
-
     _controller.isCompleted;
   }
 
@@ -215,8 +217,14 @@ fileSize: 10 * 1024 * 1024, // 1 MB (max file size)
             PopUp.sendAlertSuccess(context,
                 message: '''Données chargées avec succès.
 Revenir à la page de données''');
+            _floodScene.clear();
+            _floodDesc.clear();
+          } else if (state.status == FormzSubmissionStatus.failure) {
+            PopUp.sendAlertFailure(
+              context,
+              message: "Erreur d'exception. \nVeuillez réessayer plus tard !",
+            );
           }
-          SnackBar(content: const Text('error'));
         },
         child: Scaffold(
           resizeToAvoidBottomInset: false,
@@ -266,6 +274,7 @@ Revenir à la page de données''');
                         title: 'Lieu',
                         hint: 'Entrer le lieu de l\'alerte',
                         type: TextInputType.text,
+                        controller: _floodScene,
                         onChanged: (value) {
                           context
                               .read<AlertsBloc>()
@@ -300,6 +309,8 @@ Revenir à la page de données''');
                       InputForm(
                         title: 'Description',
                         hint: 'Décrire l’inondation et le contexte approprié',
+                        isLongText: true,
+                        controller: _floodDesc,
                         onChanged: (value) {
                           context
                               .read<AlertsBloc>()
@@ -328,10 +339,14 @@ Revenir à la page de données''');
                               hint: const Text(
                                   'Évaluer l’intensité de l’inondation'),
                               padding: EdgeInsets.symmetric(horizontal: 20.w),
-                              value: state.intensity,
+                              value: state.intensity.isNotEmpty
+                                  ? state.intensity
+                                  : null,
                               onChanged: (newValue) {
-                                context.read<AlertsBloc>().add(
-                                    AlertIntensityChanged(value: newValue!));
+                                if (newValue != null) {
+                                  context.read<AlertsBloc>().add(
+                                      AlertIntensityChanged(value: newValue));
+                                }
                               },
                               isExpanded: true,
                               underline: const SizedBox(),
@@ -407,6 +422,7 @@ Revenir à la page de données''');
                       BlocBuilder<AlertsBloc, AlertsState>(
                         builder: (context, state) {
                           return PrimaryButton(
+                            status: state.status,
                             color: AppTheme.primaryColor,
                             textColor: CupertinoColors.white,
                             onPressed: state.isValid

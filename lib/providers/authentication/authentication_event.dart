@@ -8,14 +8,17 @@ class AuthenticationStatusChanged extends AuthenticationEvent {
   AuthenticationStatusChanged(this.status);
 
   final AuthenticationStatus status;
-  
-  @override
 
+  @override
   List<Object?> get props => [status];
 }
 
 class AuthenticationLogoutRequested extends AuthenticationEvent {
   @override
+  List<Object?> get props => [];
+}
 
+class AuthenticationGetUser extends AuthenticationEvent {
+  @override
   List<Object?> get props => [];
 }

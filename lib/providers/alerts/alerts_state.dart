@@ -6,7 +6,7 @@ class AlertsState extends Equatable {
   final List<FloodAlert> alerts;
   final LatLng position;
   final String locationTyped;
-  final String? intensity;
+  final String intensity;
   final String description;
   final XFile? file;
   final String? filePathName;
@@ -17,7 +17,7 @@ class AlertsState extends Equatable {
     this.alerts = const [],
     this.position = const LatLng(0, 0),
     this.locationTyped = '',
-    this.intensity,
+    this.intensity = '',
     this.description = '',
     this.file,
     this.filePathName,

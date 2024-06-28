@@ -22,3 +22,27 @@ class SignInPasswordChangedEvent extends SignInEvent {
 }
 
 class SubmitEvent extends SignInEvent {}
+
+class StopEvent extends SignInEvent {}
+
+// update password event
+
+class CurrentPasswordChangedEvent extends SignInEvent {
+  const CurrentPasswordChangedEvent(this.password);
+
+  final String password;
+}
+
+class NewPasswordChangedEvent extends SignInEvent {
+  const NewPasswordChangedEvent(this.password);
+
+  final String password;
+}
+
+class NewPasswordConfirmationChangedEvent extends SignInEvent {
+  const NewPasswordConfirmationChangedEvent(this.password);
+
+  final String password;
+}
+
+class NewPasswordSubmitEvent extends SignInEvent {}

@@ -1,8 +1,14 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mafuriko/utils/interceptor_client_utils.dart';
+import 'package:mafuriko/utils/upload_to_digit_oc.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Authentication extends ChangeNotifier {
@@ -38,12 +44,14 @@ class Authentication extends ChangeNotifier {
 
       final data = json.decode(response.body);
       if (response.statusCode == 201 &&
-          data['message'] == "User enregistré !") {
+          data['message'] == "User registered !") {
         final SharedPreferences pref = await SharedPreferences.getInstance();
 
         final userData = data['data'];
+        final token = data['token'];
 
         pref.setString('userData', jsonEncode(userData));
+        pref.setString('token', token);
 
         debugPrint(pref.getString('userData'));
 
@@ -83,12 +91,14 @@ class Authentication extends ChangeNotifier {
       debugPrint('Response body: ${response.body}');
 
       final data = json.decode(response.body);
-      if (response.statusCode == 201 && data['message'] == "connected") {
+      if (response.statusCode == 201 && data['message'] == "User conneted!") {
         final SharedPreferences pref = await SharedPreferences.getInstance();
 
         final userData = data['data'];
+        final token = data['token'];
 
         pref.setString('userData', jsonEncode(userData));
+        pref.setString('token', token);
 
         debugPrint('data cached : \n${pref.getString('userData')}');
 
@@ -107,24 +117,23 @@ class Authentication extends ChangeNotifier {
     required String newPassword,
     required String passwordConfirmation,
   }) async {
-    final body = {
-      "userPassword": "12345",
-      "usernewPassword": "13579",
-      "usernewPasswordC": "13579"
-    };
-
-    final headers = <String, String>{
-      'Content-Type': 'application/json',
-      'Authorization': 'token'
-    };
     try {
-      final response = await http.put(
-        Uri.parse('https://mafu-back.vercel.app/users/signup'),
-        headers: headers,
-        body: json.encode(body),
-      );
-      if (response.statusCode == 200) true;
-      return false;
+      final uri =
+          Uri.parse('https://mafu-back.vercel.app/users/update-password');
+      final request = http.Request('PUT', uri);
+
+      request.body = json.encode({
+        "userPassword": currentPassword,
+        "usernewPassword": newPassword,
+        "usernewPasswordC": passwordConfirmation,
+      });
+
+      final response = await ClientService.client.send(request);
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (e) {
       debugPrint('####################### $e');
       return false;
@@ -134,24 +143,49 @@ class Authentication extends ChangeNotifier {
   static Future<bool> updateUser(
       {required String lastName,
       required String firstName,
+      XFile? image,
       required String phoneNumber}) async {
-    final body = {
-      "image":
-          "https://www.figma.com/design/YhOJi4lKOkFNkbAwamSjHY/Mafuriko-Design?node-id=70-4065",
-      "userFirstName": firstName
-    };
-
-    final headers = <String, String>{
-      'Content-Type': 'application/json',
-      'Authorization': 'token'
-    };
+    final SharedPreferences pref = await SharedPreferences.getInstance();
     try {
-      final response = await http.put(
-        Uri.parse('https://mafu-back.vercel.app/users/signup'),
-        headers: headers,
-        body: json.encode(body),
-      );
-      if (response.statusCode == 200) true;
+      Uri? userImageUri;
+      if (image != null) {
+        userImageUri = await uploadFile(File(image.path), "user");
+        debugPrint('avatar image take by user  ${userImageUri?.toString()}');
+      }
+      final uri = Uri.parse('https://mafu-back.vercel.app/users/update');
+      final request = http.Request('PUT', uri);
+
+      // request.fields['userLastName'] = lastName;
+      // request.fields['userFirstName'] = firstName;
+      // request.fields['userNumber'] = phoneNumber;
+
+      if (userImageUri != null) {
+        request.body = json.encode({
+          "image": userImageUri.toString(),
+          "userFirstName": firstName,
+          "userLastName": lastName,
+          "userNumber": phoneNumber
+        });
+      } else {
+        request.body = json.encode({
+          "userFirstName": firstName,
+          "userLastName": lastName,
+          "userNumber": phoneNumber
+        });
+      }
+
+      final response = await ClientService.client.send(request);
+
+      final myData = await response.stream.transform(utf8.decoder).join();
+
+      if (response.statusCode == 200) {
+        var updatedData = jsonDecode(myData)['data'];
+        debugPrint('data updated:::::::::::: $updatedData');
+        await pref.remove("userData");
+        pref.setString('userData', jsonEncode(updatedData));
+
+        return true;
+      }
       return false;
     } catch (e) {
       debugPrint('####################### $e');

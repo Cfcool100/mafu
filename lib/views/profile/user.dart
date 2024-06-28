@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:mafuriko/providers/user.providers.dart';
+import 'package:mafuriko/providers/profile/profile_bloc.dart';
 import 'package:mafuriko/utils/themes.dart';
+import 'package:mafuriko/views/profile/edit.dart';
 import 'package:mafuriko/widgets/section_title.dart';
 
 class ProfileUser extends StatelessWidget {
@@ -41,7 +42,7 @@ class ProfileUser extends StatelessWidget {
                         )
                       ],
                     ),
-                    child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                    child: BlocBuilder<ProfileBloc, ProfileState>(
                       builder: (context, state) {
                         return Column(
                           children: [
@@ -70,7 +71,7 @@ class ProfileUser extends StatelessWidget {
                                     .copyWith(fontWeight: FontWeight.w400),
                               ),
                               trailing: Text(
-                                '${state.user?.userNumber.contains('+225') == true? '' : '+225'} ${state.user?.userNumber}',
+                                '${state.user?.userNumber?.contains('+225') == true ? '' : '+225'} ${state.phoneNumber.value}',
                                 style: AppTheme.textSemiRegularH5
                                     .copyWith(fontSize: 12.0),
                               ),
@@ -102,20 +103,10 @@ class ProfileUser extends StatelessWidget {
                       },
                     ),
                   ),
-                  Positioned(
+                  const Positioned(
                     top: -35,
-                    child: CircleAvatar(
-                      radius: 35,
-                      backgroundColor: AppTheme.secondaryColor,
-                      child: Container(
-                        decoration: const ShapeDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('images/profile.png'),
-                            fit: BoxFit.contain,
-                          ),
-                          shape: CircleBorder(),
-                        ),
-                      ),
+                    child: AvatarProfile(
+                      isModifiable: false,
                     ),
                   ),
                 ],

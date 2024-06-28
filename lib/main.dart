@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:mafuriko/providers/alerts/alerts_bloc.dart';
+import 'package:mafuriko/providers/profile/profile_bloc.dart';
 import 'package:mafuriko/providers/user.providers.dart';
 import 'package:mafuriko/routes/routes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -35,6 +36,9 @@ class MyApp extends StatelessWidget {
             ),
             BlocProvider(
               create: (context) => AlertsBloc(),
+            ),
+            BlocProvider(
+              create: (context) => ProfileBloc(),
             ),
           ],
           child: MaterialApp.router(

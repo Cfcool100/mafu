@@ -31,4 +31,11 @@ class ProfileUpdateEvent extends ProfileEvent {
   const ProfileUpdateEvent();
 }
 
+class ProfileUserModelDataEvent extends ProfileEvent {
+  final UserModel user;
+  const ProfileUserModelDataEvent(this.user);
+}
+
 class SubmitForm extends ProfileEvent {}
+
+class Initial extends ProfileEvent {}

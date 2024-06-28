@@ -15,6 +15,7 @@ class AuthenticationBloc
   AuthenticationBloc() : super(const AuthenticationState.unknown()) {
     on<AuthenticationStatusChanged>(_onAuthenticationStatusChanged);
     on<AuthenticationLogoutRequested>(_onAuthenticationLogoutRequested);
+    on<AuthenticationGetUser>(_onAuthenticationGetUser);
 
     _tryGetUser().asStream().listen((user) {
       if (user != null) {
@@ -82,5 +83,17 @@ class AuthenticationBloc
           'Une erreur s\'est produite lors de la récupération des données utilisateur en cache: \n$e');
       return null;
     }
+  }
+
+  void _onAuthenticationGetUser(
+      AuthenticationGetUser event, Emitter<AuthenticationState> emit) async {
+    final user = await _tryGetUser();
+
+    print('user new ::::::::: ${user?.firstName} ${user?.lastName}');
+    return emit(
+      user != null
+          ? AuthenticationState.authenticated(user)
+          : const AuthenticationState.unauthenticated(),
+    );
   }
 }

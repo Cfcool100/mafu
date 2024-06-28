@@ -2,30 +2,55 @@ part of 'signin_bloc.dart';
 
 class SignInState extends Equatable {
   const SignInState({
-    required this.email,
-    required this.password,
-    required this.isValid,
-    required this.status,
+    this.email = const Email.pure(),
+    this.password = const PasswordValidator.pure(),
+    this.newPassword = const PasswordValidator.pure(),
+    this.currentPassword = const PasswordValidator.pure(),
+    this.newConfirmPassword = const PasswordValidator.pure(),
+    this.status = FormzSubmissionStatus.initial,
+    this.isValid = false,
   });
 
   final Email email;
   final PasswordValidator password;
-  final FormzSubmissionStatus status; //
+  final PasswordValidator currentPassword;
+  final PasswordValidator newPassword;
+  final PasswordValidator newConfirmPassword;
+  final FormzSubmissionStatus status;
   final bool isValid;
 
   @override
-  List<Object> get props => [email, password, isValid, status];
+  List<Object> get props {
+    return [
+      email,
+      password,
+      currentPassword,
+      newPassword,
+      newConfirmPassword,
+      status,
+      isValid,
+    ];
+  }
 
-  SignInState copyWith(
-      {Email? newEmail,
-      PasswordValidator? newPassword,
-      bool? newIsValid,
-      FormzSubmissionStatus? newStatus}) {
+  factory SignInState.initial() => const SignInState();
+
+  SignInState copyWith({
+    Email? email,
+    PasswordValidator? password,
+    PasswordValidator? currentPassword,
+    PasswordValidator? newPassword,
+    PasswordValidator? newConfirmPassword,
+    FormzSubmissionStatus? status,
+    bool? isValid,
+  }) {
     return SignInState(
-      email: newEmail ?? email,
-      password: newPassword ?? password,
-      isValid: newIsValid ?? isValid,
-      status: newStatus ?? status,
+      email: email ?? this.email,
+      password: password ?? this.password,
+      currentPassword: currentPassword ?? this.currentPassword,
+      newPassword: newPassword ?? this.newPassword,
+      newConfirmPassword: newConfirmPassword ?? this.newConfirmPassword,
+      status: status ?? this.status,
+      isValid: isValid ?? this.isValid,
     );
   }
 }

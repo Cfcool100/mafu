@@ -2,12 +2,13 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'package:dio/dio.dart';
+// import 'package:dio/dio.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mafuriko/models/alert.models.dart';
+import 'package:mafuriko/utils/interceptor_client_utils.dart';
 import 'package:mafuriko/utils/upload_to_digit_oc.dart';
 // import 'package:location/location.dart';
 // import 'package:mafuriko/utils/pop_up.dart';
@@ -21,56 +22,47 @@ class Alert extends ChangeNotifier {
     required String intensity,
     XFile? image,
   }) async {
-    final dio = Dio();
-
     // final FormData formData = FormData();
 
     try {
-      // formData.files.addAll([
-      //   MapEntry(
-      //       "files",
-      //       await MultipartFile.fromFile(File(
-      //               '/data/user/0/com.geodaftar.mafuriko/cache/86fc05f6-5f1a-42af-8e26-1213275e7443/1000000042.jpg')
-      //           .path)),
-      // ]);
-
-      // formData.fields.add(MapEntry('longitude', position.longitude.toString()));
-      // formData.fields.add(MapEntry('latitude', position.latitude.toString()));
-      // formData.fields.add(MapEntry('floodDescription', description));
-      // formData.fields.add(MapEntry('floodIntensity', intensity));
       Uri? floodImageUri;
       if (image != null) {
         floodImageUri = await uploadFile(File(image.path), "alerts");
         debugPrint('flood image take by user  $floodImageUri');
       }
 
-      final Map<String, dynamic> formData = {
+      // if (floodImageUri != null) {
+      //   request["proprietyImages"] = floodImageUri.toString();
+      // }
+
+      final request = http.Request(
+          'POST', Uri.parse('https://mafu-back.vercel.app/zones-inondees/add'));
+
+      request.body = json.encode({
         'floodScene': location,
-        'longitude': '${position.longitude}',
-        'latitude': '${position.latitude}',
+        "floodLocation": {
+          'longitude': '${position.longitude}',
+          'latitude': '${position.latitude}',
+        },
         'floodDescription': description,
         'floodIntensity': intensity,
-      };
+        'floodImage': '$floodImageUri'
+      });
 
-      if (floodImageUri != null) {
-        formData["proprietyImages"] = floodImageUri.toString();
-      }
-
-      debugPrint('>>>>>>>>>>>>>>>>>>>>${formData.entries}>>>>>>>>>>>>>>>>>>>>');
-      debugPrint(
-          '========================${formData.values.first}========================');
+      debugPrint('>>>>>>>>>>>>>>>>>>>>${request.body}>>>>>>>>>>>>>>>>>>>>');
 
       // formData.files.add(value)
-      final response = await dio.post(
-        'https://mafu-back.vercel.app/zonesInondees',
-        data: formData,
-      );
+      final response = await ClientService.client.send(request);
+      debugPrint(
+          '========================${response.reasonPhrase}========================');
 
-      if (response.statusCode == 200) {
-        debugPrint('Response body: ${response.data}');
+      final body = await response.stream.transform(utf8.decoder).join();
+
+      if (response.statusCode == 201) {
+        debugPrint('Response body: ${jsonDecode(body)}');
         return true;
       } else {
-        debugPrint('Response Failed body: ${response.data}');
+        debugPrint('Response Failed body: ${response.statusCode}');
         return false;
       }
     } catch (e) {
@@ -84,19 +76,15 @@ class Alert extends ChangeNotifier {
     final SharedPreferences pref = await SharedPreferences.getInstance();
 
     try {
-      final response = await http.get(
-        Uri.parse('https://mafu-back.vercel.app/zonesInondees'),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
+      final response = await ClientService.client.get(
+        Uri.parse('https://mafu-back.vercel.app/zones-inondees/all-infos'),
       );
 
       debugPrint('Response status: ${response.statusCode}');
       debugPrint('Response body: ${response.body}');
 
-      if (response.statusCode == 200) {
-        final List<dynamic> dataList = jsonDecode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> dataList = jsonDecode(response.body)["data"];
 
         // Vérifiez si dataList est une liste et contient des éléments
         if (dataList.isNotEmpty) {
