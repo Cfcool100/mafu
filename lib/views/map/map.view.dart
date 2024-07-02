@@ -68,10 +68,10 @@ class _MapPageState extends State<MapPage> {
         _markers = alerts.map((alert) {
           return Marker(
             markerId: MarkerId(
-                'alert_${alert.floodLocation['latitude']}_${alert.floodLocation['longitude']}'),
+                'alert_${alert.floodLocation?['latitude']}_${alert.floodLocation?['longitude']}'),
             position: LatLng(
-              double.parse(alert.floodLocation['latitude']!),
-              double.parse(alert.floodLocation['longitude']!),
+              double.parse(alert.floodLocation!['latitude']!),
+              double.parse(alert.floodLocation!['longitude']!),
             ),
             infoWindow: InfoWindow(
                 title: ' ${alerts.first.floodIntensity}',
@@ -81,10 +81,10 @@ class _MapPageState extends State<MapPage> {
         _circles = alerts
             .map((alert) => Circle(
                   circleId: CircleId(
-                      'alert_${alert.floodLocation['latitude']}_${alert.floodLocation['longitude']}'),
+                      'alert_${alert.floodLocation?['latitude']}_${alert.floodLocation?['longitude']}'),
                   center: LatLng(
-                    double.parse(alert.floodLocation['latitude']!),
-                    double.parse(alert.floodLocation['longitude']!),
+                    double.parse(alert.floodLocation!['latitude']!),
+                    double.parse(alert.floodLocation!['longitude']!),
                   ),
                   radius: 100.r,
                   strokeColor: Colors.redAccent.shade100,

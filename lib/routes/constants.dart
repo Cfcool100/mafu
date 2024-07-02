@@ -9,5 +9,6 @@ class Paths {
   static String editProfile = 'editProfile';
   static String userProfile = 'userProfile';
   static String preference = 'preference';
+  static String historical = 'Historical';
   static String security = 'security';
 }

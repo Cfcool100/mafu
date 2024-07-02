@@ -61,7 +61,9 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
   FutureOr<void> _submitEvent(
       SubmitEvent event, Emitter<SignInState> emit) async {
     if (state.isValid) {
-      emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
+      emit(state.copyWith(
+          status: FormzSubmissionStatus.inProgress,
+          authState: AuthState.isLogin));
 
       try {
         bool success = await Authentication.userLogin(
@@ -143,7 +145,9 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
   FutureOr<void> _newPasswordSubmitEvent(
       NewPasswordSubmitEvent event, Emitter<SignInState> emit) async {
     if (state.isValid) {
-      emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
+      emit(state.copyWith(
+          status: FormzSubmissionStatus.inProgress,
+          authState: AuthState.isUpdatePass));
 
       try {
         bool success = await Authentication.updateUserPassword(

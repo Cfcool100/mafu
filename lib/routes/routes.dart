@@ -7,6 +7,7 @@ import 'package:mafuriko/views/home/home.view.dart';
 import 'package:mafuriko/views/onboarding/onboarding.dart';
 import 'package:mafuriko/views/onboarding/splash_screen.dart';
 import 'package:mafuriko/views/profile/edit.dart';
+import 'package:mafuriko/views/profile/historical.dart';
 import 'package:mafuriko/views/profile/preference.dart';
 import 'package:mafuriko/views/profile/profile.view.dart';
 import 'package:mafuriko/views/profile/security.dart';
@@ -67,5 +68,10 @@ final GoRouter router = GoRouter(routes: [
     path: '/${Paths.preference}',
     builder: (context, state) => const Preference(),
     name: Paths.preference,
+  ),
+  GoRoute(
+    path: '/${Paths.historical}',
+    builder: (context, state) => const Historical(),
+    name: Paths.historical,
   ),
 ]);

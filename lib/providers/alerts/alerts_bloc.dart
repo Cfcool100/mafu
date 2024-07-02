@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -9,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mafuriko/controllers/alert.controller.dart';
 import 'package:mafuriko/models/alert.models.dart';
 import 'package:mafuriko/utils/files_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'alerts_event.dart';
 part 'alerts_state.dart';
@@ -34,6 +36,9 @@ class AlertsBloc extends Bloc<AlertsEvent, AlertsState> {
     emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
     try {
       final List<FloodAlert> data = await Alert.fetchAlert();
+      final SharedPreferences pref = await SharedPreferences.getInstance();
+
+      var alerts = pref.getString('FloodAlert');
 
       if (data.isNotEmpty) {
         debugPrint('''
@@ -48,6 +53,13 @@ class AlertsBloc extends Bloc<AlertsEvent, AlertsState> {
 ''');
         emit(state.copyWith(
             alerts: data, status: FormzSubmissionStatus.success));
+      } else if (alerts != null) {
+        var decodedData = jsonDecode(alerts);
+        List<FloodAlert> floods =
+            decodedData.map((item) => FloodAlert.fromJson(item)).toList();
+
+        emit(state.copyWith(
+            alerts: floods, status: FormzSubmissionStatus.success));
       } else {
         emit(state.copyWith(alerts: [], status: FormzSubmissionStatus.failure));
       }

@@ -214,9 +214,11 @@ fileSize: 10 * 1024 * 1024, // 1 MB (max file size)
       child: BlocListener<AlertsBloc, AlertsState>(
         listener: (context, state) {
           if (state.status == FormzSubmissionStatus.success) {
-            PopUp.sendAlertSuccess(context,
-                message: '''Données chargées avec succès.
-Revenir à la page de données''');
+            PopUp.sendAlertSuccess(
+              context,
+              message:
+                  'Données chargées avec succès \nRevenir à la page de données',
+            );
             _floodScene.clear();
             _floodDesc.clear();
           } else if (state.status == FormzSubmissionStatus.failure) {
@@ -274,6 +276,7 @@ Revenir à la page de données''');
                         title: 'Lieu',
                         hint: 'Entrer le lieu de l\'alerte',
                         type: TextInputType.text,
+                        isLongText: true,
                         controller: _floodScene,
                         onChanged: (value) {
                           context
@@ -383,8 +386,7 @@ Revenir à la page de données''');
                         children: [
                           GestureDetector(
                             onTap: () {
-                              // imageToBase64();
-                              showCustomBottomSheet(context);
+                              context.read<AlertsBloc>().add(PickAlertImage());
                             },
                             child: Container(
                               width: 114.w,
@@ -401,20 +403,24 @@ Revenir à la page de données''');
                               ),
                             ),
                           ),
-                          Container(
-                            width: 236.w,
-                            height: 115.h,
-                            decoration: ShapeDecoration(
-                              image: DecorationImage(
-                                image: _pickedFile != null
-                                    ? FileImage(File(_pickedFile!.path))
-                                        as ImageProvider<Object>
-                                    : const AssetImage("images/image.png"),
-                                fit: BoxFit.cover,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.r)),
-                            ),
+                          BlocBuilder<AlertsBloc, AlertsState>(
+                            builder: (context, state) {
+                              return Container(
+                                width: 236.w,
+                                height: 115.h,
+                                decoration: ShapeDecoration(
+                                  image: DecorationImage(
+                                    image: state.file != null
+                                        ? FileImage(File(state.file!.path))
+                                            as ImageProvider<Object>
+                                        : const AssetImage("images/image.png"),
+                                    fit: BoxFit.cover,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.r)),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),

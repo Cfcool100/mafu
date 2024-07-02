@@ -113,7 +113,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       Text(
-                        'support@mafuriko.com',
+                        'hello@geodaftar.com',
                         style: AppTheme.textSemiRegularH5.copyWith(
                           color: AppTheme.secondaryColor,
                           fontSize: 12.sp,
@@ -194,7 +194,9 @@ class AppFeatures extends StatelessWidget {
             trailing: const Icon(FlutterRemix.eye_off_line),
           ),
           ListTile(
-            onTap: () {},
+            onTap: () {
+              context.pushNamed(Paths.historical);
+            },
             title: Text(
               'Historique des contributions',
               style:

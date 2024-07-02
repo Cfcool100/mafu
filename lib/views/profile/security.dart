@@ -24,6 +24,8 @@ class _SecurityPageState extends State<SecurityPage> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: BlocListener<SignInBloc, SignInState>(
+        listenWhen: (previous, current) =>
+            current.authState == AuthState.isUpdatePass,
         listener: (context, state) {
           if (state.status.isSuccess) {
             context.read<SignInBloc>().add(StopEvent());
@@ -31,11 +33,13 @@ class _SecurityPageState extends State<SecurityPage> {
                 message:
                     "Mot de passe modifié avec succès. \nRevenir à la page profil");
           } else if (state.status.isFailure) {
+            context.read<SignInBloc>().add(StopEvent());
             Toasts.failure(
               context,
               message: "Mot de passe incorrect.",
             );
           } else if (state.status.isCanceled) {
+            context.read<SignInBloc>().add(StopEvent());
             Toasts.failure(
               context,
               message: "Une erreur est survenue. Veuillez réessayer plus tard.",

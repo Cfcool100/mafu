@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: BlocListener<SignInBloc, SignInState>(
         listenWhen: (previous, current) =>
-            current.currentPassword != previous.currentPassword,
+            current.authState == AuthState.isLogin,
         listener: (context, state) {
           if (state.isValid && state.status.isSuccess) {
             context.read<SignInBloc>().add(StopEvent());
@@ -37,12 +37,14 @@ class _LoginPageState extends State<LoginPage> {
                 AuthenticationStatus.authenticated));
             context.read<ProfileBloc>().add(const ProfileUpdateEvent());
             context.pushNamed(Paths.home);
-          } else if (state.status.isCanceled) {
+          } else if (state.status == FormzSubmissionStatus.canceled) {
+            context.read<SignInBloc>().add(StopEvent());
             Toasts.failure(
               context,
               message: "Une erreur est survenue. Veuillez réessayer plus tard.",
             );
           } else if (state.status.isFailure) {
+            context.read<SignInBloc>().add(StopEvent());
             Toasts.failure(
               context,
               message: "Email ou mot de passe incorrect.",
@@ -96,8 +98,10 @@ class _LoginPageState extends State<LoginPage> {
                                   hint: 'Entrer votre mot de passe',
                                   type: TextInputType.number,
                                   obscure: true,
-                                  errorText: state.password.isNotValid
-                                      ? "Entrer un minimum de 6 caractères"
+                                  errorText: state.password.isNotValid &&
+                                          state.password.displayError?.name !=
+                                              null
+                                      ? "${state.password.displayError?.name}: entrer un minimum de 6 chiffres"
                                       : null,
                                   onChanged: (value) {
                                     context

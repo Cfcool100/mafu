@@ -1,5 +1,7 @@
 part of 'signin_bloc.dart';
 
+enum AuthState { isLogin, isUpdatePass }
+
 class SignInState extends Equatable {
   const SignInState({
     this.email = const Email.pure(),
@@ -9,6 +11,7 @@ class SignInState extends Equatable {
     this.newConfirmPassword = const PasswordValidator.pure(),
     this.status = FormzSubmissionStatus.initial,
     this.isValid = false,
+    this.authState = AuthState.isLogin,
   });
 
   final Email email;
@@ -18,6 +21,7 @@ class SignInState extends Equatable {
   final PasswordValidator newConfirmPassword;
   final FormzSubmissionStatus status;
   final bool isValid;
+  final AuthState authState;
 
   @override
   List<Object> get props {
@@ -29,6 +33,7 @@ class SignInState extends Equatable {
       newConfirmPassword,
       status,
       isValid,
+      authState,
     ];
   }
 
@@ -42,6 +47,7 @@ class SignInState extends Equatable {
     PasswordValidator? newConfirmPassword,
     FormzSubmissionStatus? status,
     bool? isValid,
+    AuthState? authState,
   }) {
     return SignInState(
       email: email ?? this.email,
@@ -51,6 +57,7 @@ class SignInState extends Equatable {
       newConfirmPassword: newConfirmPassword ?? this.newConfirmPassword,
       status: status ?? this.status,
       isValid: isValid ?? this.isValid,
+      authState: authState ?? this.authState,
     );
   }
 }
