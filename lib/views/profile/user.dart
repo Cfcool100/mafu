@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:mafuriko/providers/profile/profile_bloc.dart';
 import 'package:mafuriko/utils/themes.dart';
@@ -27,7 +28,6 @@ class ProfileUser extends StatelessWidget {
                 clipBehavior: Clip.none,
                 children: [
                   Container(
-                    height: MediaQuery.sizeOf(context).height * .25,
                     decoration: ShapeDecoration(
                       color: Colors.white,
                       shape: RoundedRectangleBorder(
@@ -46,7 +46,7 @@ class ProfileUser extends StatelessWidget {
                       builder: (context, state) {
                         return Column(
                           children: [
-                            const Gap(30),
+                            Gap(35.h),
                             ListTile(
                               title: Text(
                                 'Nom',
@@ -56,13 +56,13 @@ class ProfileUser extends StatelessWidget {
                               trailing: Text(
                                 '${state.user?.lastName} ${state.user?.firstName}',
                                 style: AppTheme.textSemiRegularH5
-                                    .copyWith(fontSize: 12.0),
+                                    .copyWith(fontSize: 12.sp),
                               ),
                             ),
-                            const Divider(
-                              height: 1,
-                              indent: 15,
-                              endIndent: 15,
+                            Divider(
+                              height: 1.h,
+                              indent: 15.w,
+                              endIndent: 15.w,
                             ),
                             ListTile(
                               title: Text(
@@ -73,13 +73,13 @@ class ProfileUser extends StatelessWidget {
                               trailing: Text(
                                 '${state.user?.userNumber?.contains('+225') == true ? '' : '+225'} ${state.phoneNumber.value}',
                                 style: AppTheme.textSemiRegularH5
-                                    .copyWith(fontSize: 12.0),
+                                    .copyWith(fontSize: 12.sp),
                               ),
                             ),
-                            const Divider(
-                              height: 1,
-                              indent: 15,
-                              endIndent: 15,
+                            Divider(
+                              height: 1.h,
+                              indent: 15.w,
+                              endIndent: 15.w,
                             ),
                             ListTile(
                               title: Text(
@@ -90,22 +90,23 @@ class ProfileUser extends StatelessWidget {
                               trailing: Text(
                                 '${state.user?.userEmail}',
                                 style: AppTheme.textSemiRegularH5
-                                    .copyWith(fontSize: 12.0),
+                                    .copyWith(fontSize: 12.sp),
                               ),
                             ),
-                            const Divider(
-                              height: 1,
-                              indent: 15,
-                              endIndent: 15,
+                            Divider(
+                              height: 1.h,
+                              indent: 15.w,
+                              endIndent: 15.w,
                             ),
+                            Gap(25.h)
                           ],
                         );
                       },
                     ),
                   ),
-                  const Positioned(
-                    top: -35,
-                    child: AvatarProfile(
+                  Positioned(
+                    top: -35.h,
+                    child: const AvatarProfile(
                       isModifiable: false,
                     ),
                   ),

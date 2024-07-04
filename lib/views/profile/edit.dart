@@ -215,10 +215,6 @@ class AvatarProfile extends StatelessWidget {
           : null,
       child: Stack(
         children: [
-          SizedBox(
-            width: 70.w,
-            height: 75.h,
-          ),
           BlocBuilder<ProfileBloc, ProfileState>(
             builder: (context, state) {
               return CircleAvatar(
