@@ -1,8 +1,10 @@
 import 'package:go_router/go_router.dart';
+import 'package:mafuriko/models/alert.models.dart';
 import 'package:mafuriko/routes/constants.dart';
 import 'package:mafuriko/views/authentication/login.dart';
 import 'package:mafuriko/views/authentication/register.dart';
 import 'package:mafuriko/views/data/data_form.dart';
+import 'package:mafuriko/views/home/alerte_detail.dart';
 import 'package:mafuriko/views/home/home.view.dart';
 import 'package:mafuriko/views/onboarding/onboarding.dart';
 import 'package:mafuriko/views/onboarding/splash_screen.dart';
@@ -73,5 +75,15 @@ final GoRouter router = GoRouter(routes: [
     path: '/${Paths.historical}',
     builder: (context, state) => const Historical(),
     name: Paths.historical,
+  ),
+  GoRoute(
+    path: '/${Paths.alertDetail}',
+    builder: (context, state) {
+      FloodAlert alert = state.extra as FloodAlert;
+      return AlertDetailScreen(
+        alert: alert,
+      );
+    },
+    name: Paths.alertDetail,
   ),
 ]);

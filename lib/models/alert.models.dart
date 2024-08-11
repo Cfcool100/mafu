@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class FloodAlert extends Equatable {
-  final Map<String, String>? floodLocation;
+  final Map<String, dynamic> floodLocation;
   final String? floodScene;
   final String floodDate;
   final String? floodDescription;
@@ -19,8 +19,7 @@ class FloodAlert extends Equatable {
 
   factory FloodAlert.fromJson(Map<String, dynamic> json) {
     return FloodAlert(
-      floodLocation:
-          json['floodLocation'] ?? {"latitude": "0.0", "longitude": "0.0"},
+      floodLocation: Map<String, dynamic>.from(json['floodLocation']),
       floodScene: json['floodScene'] as String?,
       floodDate: json['floodDate'],
       floodDescription: json['floodDescription'] ?? 'NaN',

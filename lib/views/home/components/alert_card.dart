@@ -66,6 +66,8 @@ class AlertInfosCard extends StatelessWidget {
               children: [
                 Text(
                   '${data.floodScene}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.start,
                   style: AppTheme.textBlackH6
                       .copyWith(fontWeight: FontWeight.w400, fontSize: 16.sp),

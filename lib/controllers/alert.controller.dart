@@ -40,10 +40,8 @@ class Alert extends ChangeNotifier {
 
       request.body = json.encode({
         'floodScene': location,
-        "floodLocation": {
-          'longitude': '${position.longitude}',
-          'latitude': '${position.latitude}',
-        },
+        'longitude': '${position.longitude}',
+        'latitude': '${position.latitude}',
         'floodDescription': description,
         'floodIntensity': intensity,
         'floodImage': '$floodImageUri'
@@ -84,6 +82,7 @@ class Alert extends ChangeNotifier {
       debugPrint('Response body: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        await pref.remove('FloodAlert');
         final List<dynamic> dataList = jsonDecode(response.body)["data"];
 
         // Vérifiez si dataList est une liste et contient des éléments

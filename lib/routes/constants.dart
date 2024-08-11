@@ -11,4 +11,5 @@ class Paths {
   static String preference = 'preference';
   static String historical = 'Historical';
   static String security = 'security';
+  static String alertDetail = 'alertDetail';
 }

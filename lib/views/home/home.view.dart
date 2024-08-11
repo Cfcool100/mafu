@@ -17,7 +17,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(top: false, child: page()),
+      body: PopScope(
+        canPop: false,
+        child: SafeArea(top: false, child: page()),
+      ),
       bottomNavigationBar: bottomNavBar(
         context: context,
         index: _currentIndex,

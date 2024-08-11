@@ -7,10 +7,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:formz/formz.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:location/location.dart';
 // import 'package:mafuriko/controllers/alert.controller.dart';
 import 'package:mafuriko/models/alert.models.dart';
 import 'package:mafuriko/providers/alerts/alerts_bloc.dart';
+import 'package:mafuriko/routes/constants.dart';
 
 import 'package:mafuriko/utils/themes.dart';
 import 'package:mafuriko/views/home/components/home_component.dart';
@@ -155,9 +157,13 @@ class _HomeState extends State<Home> {
                           scrollDirection: Axis.horizontal,
                           itemCount: floodAlerts.length,
                           itemBuilder: (context, index) {
-                            return AlertInfosCard(
-                              data: floodAlerts[index],
-                              index: index,
+                            return InkWell(
+                              onTap: () => context.pushNamed(Paths.alertDetail,
+                                  extra: floodAlerts[index]),
+                              child: AlertInfosCard(
+                                data: floodAlerts[index],
+                                index: index,
+                              ),
                             );
                           },
                         );
